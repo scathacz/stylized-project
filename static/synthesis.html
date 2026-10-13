@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#ffffff" />
+<title>交易笔记 · 当日综合</title>
+<link rel="stylesheet" href="/static/base.css?v=4" />
+<link rel="stylesheet" href="/static/synthesis.css?v=7" />
+<script src="/static/synthesis.js?v=5" defer></script>
+<script src="/static/synthesis_trades.js?v=1" defer></script>
+<script src="/static/helix.js?v=2" defer></script>
+<script src="/static/motion.js?v=3" defer></script>
+</head>
+<body>
+<header id="gnav" data-active="synthesis"></header>
+<script src="/static/nav.js?v=5"></script>
+<div class="app3">
+  <nav class="nav" aria-label="综合导航">
+    <div class="brand"><span class="seal" aria-hidden="true">判</span><div><h1>交易笔记</h1><span class="page-name">当日综合</span></div></div>
+    <label class="day-pick"><span class="day-name" id="day-name"></span><input type="date" id="day" aria-label="切换日期" /></label>
+    <ol class="tabs" role="tablist">
+      <li><button type="button" role="tab" data-tab="analysis" aria-selected="true"><i>1</i><span>分析</span></button></li>
+      <li><button type="button" role="tab" data-tab="priorities"><i>2</i><span>优先级</span></button></li>
+      <li><button type="button" role="tab" data-tab="plan_review"><i>3</i><span>交易计划评审</span></button></li>
+    </ol>
+    <section class="open-trades" aria-label="进行中的交易"><p class="t-label">进行中的交易</p><div id="open-trades-list"></div></section>
+    <div class="nav-foot">
+      <button class="grok" id="btn-grok" type="button">让 Grok Bot 总结</button>
+      <p id="sync" role="status" aria-live="polite"></p>
+      <dl class="meta">
+        <dt>更新</dt><dd id="meta-time">—</dd>
+        <dt>模型</dt><dd id="meta-model">—</dd>
+      </dl>
+      <a class="lnk" href="/trades">→ 交易跟踪</a>
+      <a class="lnk" href="/">← 回到当天笔记</a>
+    </div>
+  </nav>
+  <main class="doc" aria-live="polite">
+    <header class="doc-head"><span class="kicker" id="doc-kicker"></span><h2 id="doc-title">分析</h2></header>
+    <article class="md" id="doc"></article>
+  </main>
+  <aside class="chatpane" aria-label="和 Grok Bot 聊计划">
+    <div class="chat-head"><span>和 Grok Bot 聊</span><button class="lnk" id="btn-clear-chat" type="button">清空</button></div>
+    <div class="chat" id="chat"></div>
+    <form class="ask" id="ask">
+      <textarea id="ask-input" rows="3" spellcheck="false" aria-label="想说的话" placeholder="追问、反驳、补充新消息。Ctrl+Enter 发出"></textarea>
+      <div class="ask-bar"><span class="hint">消息会存入当天对话并发给 Grok Bot</span><button type="submit" class="send" id="btn-send">发出</button></div>
+    </form>
+  </aside>
+</div>
+</body>
+</html>

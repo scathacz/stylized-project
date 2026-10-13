@@ -1,0 +1,94 @@
+.app-trades{height:calc(100dvh - var(--gnav-h));display:grid;grid-template-columns:300px minmax(0,1fr)}
+.tnav{overflow:hidden}
+.t-actions{display:flex;gap:8px;margin:24px 0 12px}
+.t-btn{flex:1;border:1px solid var(--line);border-radius:var(--r1);padding:7px 10px;font-size:12.5px;letter-spacing:.2px;color:var(--green);background:var(--sheet);transition:border-color .2s,background .2s}
+.t-btn:hover{border-color:var(--green)}
+.t-btn.solid{background:var(--green);color:var(--sheet);border-color:var(--green);flex:none;padding:7px 18px}
+.t-btn.solid:hover{background:var(--green-d)}
+.t-btn.warn{color:var(--red);border-color:rgba(255,59,48,.35)}
+.t-btn.warn:hover{border-color:var(--red)}
+.t-new{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.t-new input,.t-new textarea,.t-form textarea,.t-form input,.t-add textarea{border:1px solid var(--line);background:var(--sheet);padding:8px 10px;border-radius:var(--r1);resize:vertical;width:100%}
+.t-row{display:flex;justify-content:flex-end;align-items:center;gap:14px}
+.t-lists{flex:1;overflow:auto;min-height:0;margin:6px -8px 12px;padding:0 8px}
+.t-label{font-size:11px;letter-spacing:.2px;color:var(--muted);margin:10px 0 6px;cursor:default}
+.t-label i{font:500 12px var(--num);color:var(--gold);letter-spacing:0;margin-left:4px}
+.t-closed summary{cursor:pointer;list-style:none}
+.t-closed summary::before{content:'▸ ';color:var(--gold)}
+.t-closed[open] summary::before{content:'▾ '}
+.t-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.t-item{display:block;width:100%;text-align:left;padding:10px 10px 10px 12px;border-left:2px solid transparent;transition:background .2s,border-color .2s}
+.t-item:hover{background:rgba(118,118,128,.6)}
+.t-item[aria-current=true]{background:var(--sheet);border-left-color:var(--green)}
+.t-item b{display:block;font:600 15px/1.4 var(--serif);letter-spacing:.2px;color:var(--ink)}
+.t-item small{display:flex;gap:10px;font-size:11.5px;color:var(--muted);margin-top:2px}
+.t-item small em{font:500 12px var(--num);color:var(--gold)}
+.t-item.closed b{color:var(--muted)}
+.t-empty{font-size:12.5px;color:var(--muted);padding:6px 12px}
+.t-wrap{max-width:760px;margin:0 auto}
+.t-quote{margin:0 0 30px;padding:16px 20px;border-left:2px solid var(--gold);background:var(--paper);font:16px/1.9 var(--serif);color:var(--ink-2)}
+.t-quote cite{display:block;margin-top:8px;font:500 12px var(--num);color:var(--muted)}
+.t-lesson{margin:0 0 30px;padding:20px 22px;border:1px solid var(--green);background:linear-gradient(180deg,rgba(0,122,255,.05),rgba(0,122,255,0))}
+.t-lesson h3{font:600 13px var(--body);letter-spacing:.2px;color:var(--green);margin:0 0 8px}
+.t-lesson p{margin:0;white-space:pre-wrap;font:16px/1.9 var(--serif)}
+.t-lesson .res{display:inline-block;margin-left:10px;font:12px var(--body);color:var(--red);border:1px solid rgba(255,59,48,.4);padding:0 8px;letter-spacing:.2px}
+.t-sec{font:600 12px var(--body);letter-spacing:.2px;color:var(--muted);margin:0 0 12px}
+.timeline{list-style:none;margin:0 0 26px;padding:0 0 0 18px;border-left:1px solid var(--line)}
+.timeline li{position:relative;margin:0 0 18px}
+.timeline li::before{content:'';position:absolute;left:-22.5px;top:9px;width:8px;height:8px;border-radius:50%;background:var(--sheet);border:1.5px solid var(--green)}
+.tl-head{display:flex;align-items:baseline;gap:10px;font-size:12px;color:var(--muted)}
+.tl-head time{font:500 12.5px var(--num)}
+.tl-kind{color:var(--green);letter-spacing:.2px;border:1px solid var(--hair);padding:0 6px;background:var(--soft)}
+.tl-tools{margin-left:auto;display:flex;gap:10px;opacity:0;transition:opacity .2s}
+.timeline li:hover .tl-tools,.timeline li:focus-within .tl-tools{opacity:1}
+.tl-text{margin:4px 0 0;white-space:pre-wrap;font-size:15px;line-height:1.85}
+.tl-edit{width:100%;margin-top:6px;border:1px solid var(--line);background:var(--sheet);padding:8px 10px;resize:vertical}
+.t-add{border-top:1px solid var(--line);padding-top:18px;margin-bottom:28px}
+.kinds{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.kinds button{font-size:12px;letter-spacing:.2px;padding:2px 10px;border:1px solid var(--hair);color:var(--muted);border-radius:var(--r1)}
+.kinds button[aria-pressed=true]{color:var(--sheet);background:var(--green);border-color:var(--green)}
+.kinds input{width:90px;font-size:12px;padding:2px 8px;border:1px solid var(--hair);background:none}
+.t-foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:12px}
+.t-foot .hint{font-size:12px;color:var(--muted)}
+.t-form{border:1px solid var(--line);padding:18px 20px;margin-bottom:28px;background:var(--paper);display:flex;flex-direction:column;gap:10px}
+.t-form label{font-size:12px;letter-spacing:.2px;color:var(--muted)}
+.t-results{display:flex;gap:6px;flex-wrap:wrap}
+.t-danger{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--hair);padding-top:14px;margin-top:40px}
+.t-meta{display:flex;gap:16px;font-size:12px;color:var(--muted);margin-top:8px}
+.t-meta em{font:500 13px var(--num);color:var(--gold)}
+/* /synthesis 左栏里的进行中交易 */
+.open-trades{margin:22px 0 0;padding-top:14px;border-top:1px solid var(--hair);min-height:0;overflow:auto}
+.open-trades a{display:flex;justify-content:space-between;gap:8px;padding:4px 0;font-size:13px;text-decoration:none;color:var(--ink)}
+.open-trades a:hover{color:var(--green)}
+.open-trades a span{font:500 12px var(--num);color:var(--muted);white-space:nowrap}
+@media (max-width:760px){.app-trades{grid-template-columns:1fr;grid-template-rows:auto 1fr}body{overflow:auto}}
+
+/* ── editorial ── */
+.tnav .t-btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:var(--r1);font:500 12.5px var(--body);letter-spacing:0;height:34px}
+.tnav .t-btn:hover{border-color:rgba(0,0,0,.2);background:var(--g-50)}
+.t-btn.solid{background:var(--ink);color:#fff;border-color:var(--ink);border-radius:var(--r1);font-weight:500;letter-spacing:0}
+.t-btn.solid:hover{background:#262626}
+.t-btn{border-radius:var(--r1);letter-spacing:0}
+.t-label{font:500 10.5px var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.t-label i{font:500 10.5px var(--mono);font-style:normal;color:var(--ink)}
+.t-item{border-left:0;border-radius:0;border-bottom:1px solid var(--hair);padding:12px 0;background:none!important;box-shadow:none!important;position:relative}
+.t-item b{font:500 14.5px var(--body);letter-spacing:-.01em}
+.t-item small,.t-item small em{font:500 10.5px var(--mono);font-style:normal;letter-spacing:.04em;color:var(--muted)}
+.t-item[aria-current=true]::before{content:'';position:absolute;left:-14px;top:18px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.t-item:hover b{color:var(--muted)}
+.t-quote{border-left:1px solid var(--ink);border-radius:0;background:none;font:400 17px/1.75 var(--body);letter-spacing:-.01em;color:var(--ink);padding:4px 0 4px 20px}
+.t-quote cite{font:500 10.5px var(--mono);font-style:normal;text-transform:uppercase;letter-spacing:.08em}
+.t-lesson{border:0;border-top:1px solid var(--ink);border-radius:0;background:none;padding:16px 0}
+.t-lesson h3,.t-sec{font:500 10.5px var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--ink)}
+.t-lesson p{font:400 16px/1.8 var(--body)}
+.t-lesson .res{border-radius:3px;font:500 10.5px var(--mono);color:var(--ink);border-color:var(--line)}
+.t-form{border:1px solid var(--line);background:#fff;border-radius:var(--r2)}
+.t-form,.t-new input,.t-new textarea,.t-form textarea,.t-form input,.t-add textarea,.tl-edit{border-radius:var(--r1);border:1px solid var(--line);background:#fff}
+.kinds button{border-radius:4px;font:500 10.5px var(--mono);text-transform:uppercase;letter-spacing:.06em}
+.kinds button[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.timeline{border-left:1px solid var(--line)}
+.timeline li::before{width:5px;height:5px;left:-21px;top:10px;background:var(--ink);border:0}
+.tl-head time,.t-meta,.t-meta em{font:500 11px var(--mono);font-style:normal;color:var(--muted)}
+.tl-kind{font:500 10px var(--mono);text-transform:uppercase;letter-spacing:.06em;background:none;border-color:var(--line);color:var(--ink);border-radius:3px}
+.doc{background:#fff}
+#detail h2,.t-wrap h2{font:600 40px/1.05 var(--body);letter-spacing:-.04em}

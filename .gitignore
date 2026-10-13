@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.env
+data/*.db
+data/*.db-journal
+data/archive/
+data/media/
+data/settings.local.json
+.venv/
+data/
+*.bak*
+.pytest_cache/

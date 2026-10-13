@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#f2f2f7" />
+<title>交易笔记 · 速记</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500&family=Newsreader:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --paper:#f5f2e9;--sheet:#fffdf7;--ink:#2b312b;--muted:#8a8f83;--green:#284b3d;
+  --red:#a64a36;--line:#dcded0;--hair:#e6e8dc;
+  --serif:'Noto Serif SC','Songti SC','SimSun',serif;
+  --body:'Microsoft YaHei','PingFang SC',sans-serif;
+  --num:'Newsreader',Georgia,serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.7 var(--body);
+  -webkit-font-smoothing:antialiased;overflow:hidden}
+body:before{content:'';position:fixed;inset:0;pointer-events:none;opacity:.09;z-index:9;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' opacity='.2' filter='url(%23n)'/%3E%3C/svg%3E")}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+button:focus-visible,input:focus-visible,textarea:focus-visible,[contenteditable]:focus-visible{
+  outline:2px solid var(--red);outline-offset:3px}
+::placeholder{color:#b3b7ab}
+.app{height:100dvh;display:flex;flex-direction:column}
+
+/* ── 顶栏 ─────────────────────────────── */
+.head{display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding:14px 30px 12px;border-bottom:1px solid var(--line);flex-shrink:0}
+.brand{display:flex;align-items:baseline;gap:11px}
+.seal{font:17px/1 var(--serif);color:var(--red);border:1px solid var(--red);
+  padding:5px 4px 2px;transform:rotate(4deg);align-self:center}
+h1{font:500 19px/1 var(--serif);letter-spacing:2px;margin:0}
+.tools{display:flex;align-items:center;gap:16px}
+.lnk{font-size:12px;color:var(--muted);letter-spacing:.5px;text-decoration:none}
+.lnk:hover{color:var(--green)}
+#sync{font-size:12px;color:var(--red);letter-spacing:.3px;max-width:240px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#sync:empty{display:none}
+input[type=date]{border:0;background:none;font:13px var(--num);color:var(--muted);
+  padding:2px 0;width:118px;text-align:right;cursor:pointer}
+input[type=date]:hover{color:var(--green)}
+
+/* ── 两栏 ─────────────────────────────── */
+.main{flex:1;display:grid;grid-template-columns:1fr 1fr;min-height:0}
+.pane{display:flex;flex-direction:column;min-height:0}
+.left{padding:0 30px}
+.right{border-left:1px solid var(--line);padding:0 30px}
+
+/* ── 左：作者在上，写字在下 ─────────────── */
+.chipbar{position:relative;flex-shrink:0;padding:12px 0 10px;border-bottom:1px solid var(--hair);display:flex;flex-direction:column}
+.pinrow{display:flex;flex-wrap:wrap;gap:7px;align-items:center;padding:2px 0 11px;border-bottom:1px solid var(--hair)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;align-items:center;padding-top:11px}
+.chip{font-size:12.5px;line-height:1;color:#6d7365;border:1px solid var(--line);
+  border-radius:999px;padding:7px 13px;transition:background .15s,border-color .15s,color .15s}
+.chip:hover{border-color:#a9b4a2;color:var(--green)}
+.chip.on{background:var(--green);border-color:var(--green);color:var(--sheet)}
+.chip.blank{min-width:34px;padding:7px 10px}
+.chip.blank.on{background:#c3c8ba;border-color:#c3c8ba}
+.chip.add{border-style:dashed;color:#a3a89b;padding:7px 12px}
+.chip.add:hover{color:var(--green);border-color:#a9b4a2}
+.chip.pin{border-radius:3px;font-weight:600;letter-spacing:.2px;font-style:normal;box-shadow:inset 3px 0 0 currentColor}
+.chip.pin-plan{border-color:#1e3a2e;background:#e7efe6;color:#1e3a2e}
+.chip.pin-plan:hover{border-color:#1e3a2e;color:#1e3a2e;background:#dce8dc}
+.chip.pin-plan.on{background:#284b3d;border-color:#284b3d;color:#fffdf7;box-shadow:inset 3px 0 0 #d7e3d4}
+.chip.pin-thought{border-color:#a64a36;background:#f8efe8;color:#8d3d2c}
+.chip.pin-thought:hover{border-color:#a64a36;color:#8d3d2c;background:#f3e4db}
+.chip.pin-thought.on{background:#a64a36;border-color:#a64a36;color:#fffdf7;box-shadow:inset 3px 0 0 #f3ddd6}
+.chip .pin-mark{font:10px/1 var(--body);font-style:normal;letter-spacing:1px;margin-right:6px;opacity:.8}
+.page-name{font:12px var(--body);letter-spacing:2px;color:var(--muted)}
+.pop{position:absolute;top:calc(100% + 9px);left:0;z-index:6;background:var(--sheet);
+  border:1px solid #c9d1c0;border-radius:3px;box-shadow:0 12px 34px #35442c1f;padding:3px}
+.pop input{border:0;background:none;outline:0;font-size:13px;padding:8px 10px;width:186px}
+#input{flex:1;width:100%;border:0;background:none;resize:none;outline:0;
+  font:17px/2.05 var(--serif);padding:18px 0;letter-spacing:.2px}
+.dropzone{position:absolute;inset:0;pointer-events:none;border:1px dashed transparent}
+.left{position:relative}
+.left.drag .dropzone{border-color:#a9b4a2;background:#eef1e64d}
+.left.drag .dropzone:after{content:'松手，图就记到当前作者名下';position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);font-size:12.5px;color:var(--green);background:var(--sheet);
+  padding:7px 14px;border:1px solid #c9d1c0;border-radius:3px}
+
+/* ── 右：日期 / 作者 / 内容垒起来 ────────── */
+.outhead{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:15px 0 12px;border-bottom:1px solid var(--hair);flex-shrink:0}
+.q{border:0;background:none;font-size:12.5px;padding:2px 0;width:100%;max-width:190px;outline:0}
+.q:focus{outline:0;border-bottom:1px solid #a9b4a2}
+.outhead .r{display:flex;align-items:center;gap:14px;flex-shrink:0}
+.out{flex:1;overflow:auto;padding:20px 0 26px}
+.hint{color:#b3b7ab;font:13px/2 var(--serif);margin:0}
+.odate{font:500 15px/1.6 var(--serif);letter-spacing:1px;color:var(--ink);margin:0 0 20px}
+.imp-n{font:11px var(--body);color:#a3a89b;margin-left:11px;letter-spacing:.5px}
+.imp-n:empty{display:none}
+/* 悬浮：轻轻浮起来，点进去再抬一级。全程只动 background / box-shadow，不占布局，所以不会跳排版。 */
+.grp{position:relative;margin-bottom:22px;border-radius:3px;
+  transition:background .24s ease,box-shadow .24s ease}
+.grp:hover{background:#faf9f2;box-shadow:0 0 0 11px #faf9f2}
+.grp.editing{background:var(--sheet);
+  box-shadow:0 0 0 11px var(--sheet),0 14px 34px -12px #35442c33}
+.grp.editing:before{content:'';position:absolute;left:-12px;top:3px;bottom:3px;width:2px;
+  background:var(--green);border-radius:2px;animation:barIn .26s ease}
+@keyframes barIn{from{transform:scaleY(.25);opacity:0}to{transform:scaleY(1);opacity:1}}
+.grp.editing .who{color:var(--ink)}
+.who{font:500 14px/1.6 var(--serif);color:var(--green);letter-spacing:1px;margin:0 0 6px;
+  display:flex;align-items:baseline;gap:8px}
+.grp.pin{padding:2px 0 2px 12px}
+.grp.pin-plan{box-shadow:inset 3px 0 0 #284b3d}
+.grp.pin-plan .who{color:#1e3a2e}
+.grp.pin-thought{box-shadow:inset 3px 0 0 #a64a36}
+.grp.pin-thought .who{color:#8d3d2c}
+.grp.pin .who .pin-mark{font:10px/1 var(--body);font-style:normal;letter-spacing:1px;border:1px solid currentColor;padding:2px 4px}
+.grp.pin-plan:hover{background:#f3f7f1;box-shadow:inset 3px 0 0 #284b3d,0 0 0 11px #f3f7f1}
+.grp.pin-thought:hover{background:#faf6f2;box-shadow:inset 3px 0 0 #a64a36,0 0 0 11px #faf6f2}
+.cue{font:11px var(--body);color:#c3c7bb;margin-left:auto;opacity:0;transition:opacity .15s}
+.grp:hover .cue{opacity:1}
+.ln{position:relative;padding:5px 0;font-size:13.5px;line-height:1.9;cursor:text}
+.ln .tx{display:block;white-space:pre-wrap;overflow-wrap:anywhere}
+.ln .thumb{display:block;max-width:100%;max-height:156px;border:1px solid var(--line);
+  border-radius:3px;margin:5px 0 3px;cursor:zoom-in;background:var(--sheet)}
+/* 编辑态：每一条还是一个块，padding / line-height 和 .ln 完全一样，
+   所以点进去前后行位置逐行对齐（折行的那条也一样）。 */
+.tx[contenteditable]{display:block;font-size:13.5px;line-height:1.9;outline:0;cursor:text;
+  white-space:pre-wrap;overflow-wrap:anywhere}
+.eline{display:block;padding:5px 0;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;min-height:1.9em}
+.ln.hitp{background:#f7f4e8}
+mark.hit{background:#d7e3cd;color:inherit;padding:0 1px}
+b,strong{font-weight:600;color:#1f2a20}
+/* 加粗＝重要：行首一道很轻的边，方便一眼扫出来 */
+.ln.imp:before{content:'';position:absolute;left:-13px;top:10px;bottom:10px;width:2px;background:#a9b4a2}
+.ln{position:relative}
+.edithint{font-size:11px;color:#a3a89b;letter-spacing:.3px}
+.edithint:empty{display:none}
+
+/* ── 检索窗：材料先放下，问题自己写，再去问 ── */
+#btn-talks.on{color:var(--green)}
+.dock{position:fixed;top:56px;left:50%;right:0;bottom:0;z-index:30;width:auto;max-width:none;
+  display:flex;flex-direction:column;background:var(--sheet);
+  border-left:1px solid #c9d1c0;box-shadow:-28px 0 50px -18px #35442c55}
+.dock[hidden]{display:none}
+.dock-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:16px 28px;border-bottom:1px solid var(--hair);flex-shrink:0}
+.dock-title{margin:0;font:500 15px/1 var(--serif);letter-spacing:2px}
+.dock-acts{display:flex;gap:14px}
+.dock-acts button{font-size:12px;color:var(--muted);letter-spacing:.4px}
+.dock-acts button:hover{color:var(--green)}
+.dock-body{flex:1;overflow:auto;padding:22px 28px 10px;min-height:0}
+.dock-k{margin:14px 0 6px;font-size:11px;letter-spacing:1px;color:#a3a89b}
+.dock-k:first-child{margin-top:0}
+.dock-piece{margin:0;padding:0 0 0 12px;border-left:2px solid #a9b4a2;
+  font:14px/1.85 var(--serif);color:#3c4338;max-height:32vh;overflow:auto;
+  white-space:pre-wrap;overflow-wrap:anywhere}
+.dock-meta{margin:8px 0 0;font-size:11px;line-height:1.6;color:#a3a89b}
+.dock-turn{margin-top:14px;padding-top:12px;border-top:1px solid var(--hair)}
+.dock-ask{margin:0;font:500 13.5px/1.65 var(--serif)}
+.dock-ans{margin:6px 0 0;font-size:13px;line-height:1.75;overflow-wrap:anywhere}
+.dock-ans p{margin:0 0 8px}
+.dock-ans .dock-h{margin:12px 0 6px;font:500 14px/1.6 var(--serif)}
+.dock-ans .dock-list{margin:0 0 10px;padding-left:1.2em}
+.dock-ans .dock-list li{margin:3px 0}
+.dock-ans code{font:12px/1.5 ui-monospace,Consolas,monospace;background:#f0f1e8;padding:0 3px}
+.dock-ans a{color:var(--green)}
+.dock-ans.err{color:var(--red)}
+.dock-src{margin:8px 0 0;padding:0;list-style:none}
+.dock-src a{display:block;font-size:12px;line-height:1.55;color:var(--green);text-decoration:none;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dock-src a:hover{text-decoration:underline}
+.dock-compose{border-top:1px solid var(--hair);padding:12px 28px 14px;flex-shrink:0;
+  display:flex;align-items:flex-end;gap:16px}
+.dock-q{flex:1;width:auto;height:2.7em;min-height:0;max-height:2.7em;border:0;border-bottom:1px solid var(--line);
+  background:none;resize:none;outline:0;font:15px/1.7 var(--serif);padding:4px 0 6px}
+.dock-send{flex-shrink:0;margin:0 0 6px;font-size:12px;letter-spacing:.6px;color:var(--green)}
+.dock-send:hover{color:var(--red)}
+.dock-send:disabled{opacity:.45;cursor:wait}
+.dock-back{font-size:12px;color:var(--muted);letter-spacing:.3px;margin-bottom:10px}
+.dock-back:hover{color:var(--green)}
+.talk{display:block;width:100%;text-align:left;padding:12px 0;border-bottom:1px solid var(--hair)}
+.talk-time{display:block;font:12px var(--num);color:var(--muted)}
+.talk-piece{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  margin-top:3px;font:14px/1.7 var(--serif);color:var(--ink);white-space:normal}
+.talk:hover .talk-piece{color:var(--green)}
+.talk-ask{display:block;margin-top:2px;font-size:12px;line-height:1.5;color:#8a8f83;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dock-tabs{position:fixed;top:92px;right:0;z-index:31;display:flex;flex-direction:column;gap:6px;
+  align-items:flex-end;max-height:calc(100dvh - 110px)}
+.dock-tabs[hidden]{display:none}
+.dock-tabs.beside{right:auto;left:50%;transform:translateX(calc(-100% - 8px))}
+.dock-tab{position:static;writing-mode:vertical-rl;font:500 13px/1.45 var(--serif);letter-spacing:1px;
+  color:var(--sheet);background:var(--green);padding:12px 7px;border-radius:3px 0 0 3px;max-height:280px}
+.dock-tab.busy{background:#8d3d2c}
+
+@media(max-width:880px){
+  body{overflow:auto}.app{background:#f2f2f7}.head{background:rgba(255,255,255,.9);border-color:rgba(60,60,67,.12)}.main{grid-template-columns:1fr}.left{padding:0 20px}.right{border-left:0;border-top:1px solid rgba(60,60,67,.12);padding:0 20px;margin-top:14px}#input{min-height:30vh;font-size:16px}.out{max-height:56vh}.head{padding:12px 20px}.dock{left:0;top:56px}
+}
+
+/* iOS light */
+:root{--paper:#f2f2f7;--sheet:#fff;--ink:#1c1c1e;--muted:#8e8e93;--green:#007aff;--red:#ff3b30;--line:rgba(60,60,67,.12);--hair:rgba(60,60,67,.08);--serif:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Helvetica Neue",sans-serif;--body:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Helvetica Neue",sans-serif;--num:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif}
+body{background:linear-gradient(180deg,#f7f8fc,#eef0f5);color:var(--ink)}body:before{display:none}.head{background:rgba(255,255,255,.82);backdrop-filter:saturate(180%) blur(20px);border-color:var(--line)}.seal{color:#fff;background:#007aff;border:0;border-radius:9px;transform:none;font:600 15px/1 var(--body);padding:7px 6px;box-shadow:0 6px 14px rgba(0,122,255,.28)}h1{font-family:var(--body);font-weight:700;letter-spacing:-.3px}.page-name,.lnk{color:var(--muted);letter-spacing:0}.lnk:hover,.dock-send:hover,.dock-back:hover{color:var(--green)}#sync{color:var(--red)}.left,.right{background:transparent}.right{border-color:var(--line)}.chip{color:#3a3a3c;border-color:transparent;background:rgba(118,118,128,.12);border-radius:999px}.chip:hover{border-color:transparent;background:rgba(118,118,128,.18);color:var(--ink)}.chip.on{background:var(--green);border-color:var(--green);color:#fff}.chip.blank.on{background:#c7c7cc;border-color:#c7c7cc;color:#fff}.chip.pin{border-radius:999px;box-shadow:none}.chip.pin-plan{border-color:transparent;background:rgba(0,122,255,.12);color:#007aff}.chip.pin-plan.on{background:#007aff;color:#fff}.chip.pin-thought{border-color:transparent;background:rgba(255,59,48,.1);color:#d70015}.chip.pin-thought.on{background:#ff3b30;color:#fff}#input{font-family:var(--body);font-size:17px;line-height:1.7;color:var(--ink);letter-spacing:0}::placeholder{color:#aeaeb2}.grp{border-radius:14px}.grp:hover{background:#fff;box-shadow:0 0 0 10px #fff,0 8px 24px rgba(0,0,0,.06)}.grp.editing{background:#fff;box-shadow:0 0 0 10px #fff,0 14px 34px rgba(0,0,0,.08)}.who{font-family:var(--body);font-weight:600;letter-spacing:0;color:var(--green)}.grp.pin-thought .who{color:var(--red)}.grp.pin-plan .who{color:#007aff}.grp.pin-plan{box-shadow:inset 3px 0 0 var(--green)}.grp.pin-thought{box-shadow:inset 3px 0 0 var(--red)}.grp.pin-plan:hover{background:#fff;box-shadow:inset 3px 0 0 var(--green),0 0 0 10px #fff}.grp.pin-thought:hover{background:#fff;box-shadow:inset 3px 0 0 var(--red),0 0 0 10px #fff}.ln.imp:before{background:var(--green)}mark.hit{background:rgba(0,122,255,.18)}b,strong{color:inherit}.pop,.dock{background:var(--sheet);border-color:var(--line);border-radius:16px}.dock{box-shadow:-16px 0 40px rgba(0,0,0,.08);border-radius:0}.dock-tab{background:var(--green);color:#fff;border-radius:12px 0 0 12px}.dock-piece{color:var(--ink);border-color:rgba(0,122,255,.35)}.dock-ans code{background:#f2f2f7}.q:focus,.dock-q{border-color:rgba(60,60,67,.18)}
+@media(max-width:880px){.main{background:transparent}}
+
+/* ── 环境层（three.js）：整页浅色浮点 + 细连线，配色沿用上面原样（#007aff / 石板灰）。
+   右栏放一块近乎不透明的同色底板，阅读区对比度不受影响。 ── */
+#bgfx{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;display:block;
+  opacity:0;transition:opacity 1s ease}
+.fx-on #bgfx{opacity:1}
+.app{position:relative;z-index:1}
+.right{background:rgba(248,249,252,.94)}
+/* 写字区后面一层很薄的白纱：点还看得见，字照样清楚 */
+#input{background:rgba(250,251,253,.55);border-radius:12px;box-shadow:-14px 0 0 0 rgba(250,251,253,.55),14px 0 0 0 rgba(250,251,253,.55)}
+/* 刚存下的那组：淡蓝底色退去（只动 background，不占布局） */
+.grp.qn-new{animation:qnNew .9s ease-out}
+@keyframes qnNew{0%{background:rgba(0,122,255,.11)}100%{background:transparent}}
+@media(prefers-reduced-motion:reduce){#bgfx{transition:none}.grp.qn-new{animation:none}}
+</style>
+</head>
+<body>
+<canvas id="bgfx" aria-hidden="true"></canvas>
+<div class="app">
+
+  <header class="head">
+    <div class="brand"><span class="seal" aria-hidden="true">记</span><h1>交易笔记</h1><span class="page-name">速记</span></div>
+    <div class="tools">
+      <span id="sync" role="status"></span>
+      <a class="lnk" href="/">笔记</a>
+      <button class="lnk" id="btn-sample" type="button">示例</button>
+      <button class="lnk" id="btn-clear" type="button">清空</button>
+      <button class="lnk" id="btn-talks" type="button">对话</button>
+      <input type="date" id="day" aria-label="记入日期" />
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="left pane" id="left">
+      <div class="dropzone" aria-hidden="true"></div>
+      <div class="chipbar" id="chipbar">
+        <div class="pinrow" id="pinrow" aria-label="计划与想法"></div>
+        <div class="chips" id="chips"></div>
+        <div class="pop" id="pop" hidden><input id="pop-input" placeholder="新作者，回车" maxlength="24" /></div>
+      </div>
+      <textarea id="input" spellcheck="false" aria-label="速记内容"
+        placeholder="回车换行，Ctrl+Enter 收进右边。框选一段再 Alt+Enter，丢进检索窗，写下问题再去问。单独一行是已有作者，下面整段归到这个人。截图直接粘进来也行。"></textarea>
+    </section>
+
+    <section class="right pane">
+      <div class="outhead">
+        <input class="q" id="q" type="search" placeholder="查…" aria-label="搜索今天的速记" />
+        <div class="r">
+          <span class="edithint" id="edithint"></span>
+          <button class="lnk" id="btn-copy" type="button">复制</button>
+        </div>
+      </div>
+      <div class="out" id="out"></div>
+    </section>
+  </main>
+</div>
+<aside class="dock" id="dock" hidden aria-label="检索窗"></aside>
+<div class="dock-tabs" id="dock-tabs" hidden></div>
+
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const UNSIGNED = '未署名';
+/* 环境层只听「换作者 / 记下了」两个事件，不影响业务。 */
+const fx = (type, detail) => { try { window.dispatchEvent(new CustomEvent(type, { detail })); } catch(e){ /* ignore */ } };
+const UI_KEY = 'luojian.quick.ui';
+const PINNED_FALLBACK = [
+  { name: 'TradingPlan', kind: 'plan', mark: '计划' },
+  { name: 'Thought', kind: 'thought', mark: '想法' },
+];
+let pinnedAuthors = PINNED_FALLBACK.slice();
+
+let day = todayStr(), editing = null, pendingCaret = null, query = '';
+let notes = { items: [], roster: [] };
+let currentName = UNSIGNED;
+let pendingAuthors = [];
+let loadSeq = 0;
+let gate = Promise.resolve();
+
+function todayStr(){
+  const d = new Date(), p = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+}
+function cnDate(iso){ const [y,m,d] = iso.split('-'); return `${y}年${Number(m)}月${Number(d)}日`; }
+function flash(err){
+  const el = $('sync');
+  if (!el) return;
+  el.textContent = err ? (err.message || String(err)) : '';
+}
+function locked(fn){
+  const run = () => Promise.resolve().then(fn);
+  const p = gate.then(run, run);
+  gate = p.catch(() => {});
+  return p;
+}
+async function req(path, options){
+  const res = await fetch(path, options);
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok){
+    const detail = data.detail;
+    const msg = typeof detail === 'string' ? detail : (data.message || `请求未完成（${res.status}）`);
+    throw new Error(msg);
+  }
+  return data;
+}
+const getNotes = iso => req('/api/notes/' + encodeURIComponent(iso));
+function postJSON(path, body){
+  return req(path, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+}
+function putJSON(path, body){
+  return req(path, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+}
+function del(path){
+  return req(path, { method:'DELETE' });
+}
+
+function accept(data){
+  loadSeq += 1;
+  if (Array.isArray(data.pinned) && data.pinned.length) pinnedAuthors = data.pinned;
+  notes.roster = data.roster || [];
+  notes.items = (data.items || []).map(it => ({
+    id: it.id,
+    author: canonical(it.source),
+    text: it.text || '',
+    important: !!it.important,
+    media: it.media || null,
+  }));
+  pendingAuthors = pendingAuthors.filter(n =>
+    n !== UNSIGNED && !notes.roster.some(r => r.toLowerCase() === n.toLowerCase())
+    && !notes.items.some(it => it.author.toLowerCase() === n.toLowerCase())
+  );
+  flash('');
+}
+function apply(data){
+  accept(data);
+  render();
+}
+function loadUI(){
+  try {
+    const ui = JSON.parse(localStorage.getItem(UI_KEY) || '{}');
+    if (ui.currentByDay && ui.currentByDay[day]) currentName = canonical(ui.currentByDay[day]);
+  } catch(e){ /* ignore */ }
+}
+function saveUI(){
+  let ui = {};
+  try { ui = JSON.parse(localStorage.getItem(UI_KEY) || '{}'); } catch(e){ ui = {}; }
+  ui.currentByDay = ui.currentByDay || {};
+  ui.currentByDay[day] = currentName;
+  try { localStorage.setItem(UI_KEY, JSON.stringify(ui)); } catch(e){ /* ignore */ }
+}
+async function refresh(){
+  const seq = ++loadSeq;
+  const iso = day;
+  const data = await getNotes(iso);
+  if (seq !== loadSeq || iso !== day) return;
+  apply(data);
+}
+
+/** 作者名忽略大小写：vito / Vito / VITO 是同一个人，沿用先写下的那种写法。 */
+function canonical(name){
+  const n = String(name || '').trim();
+  if (!n || n === UNSIGNED) return n || UNSIGNED;
+  const low = n.toLowerCase();
+  const pin = pinnedAuthors.find(p => String(p.name).toLowerCase() === low);
+  if (pin) return pin.name;
+  const hit = notes.roster.find(k => k.toLowerCase() === low)
+    || notes.items.map(i => i.author).find(k => k && k.toLowerCase() === low)
+    || pendingAuthors.find(k => k.toLowerCase() === low);
+  return hit || n;
+}
+function items(){ return notes.items; }
+function current(){ return currentName || UNSIGNED; }
+function setCurrent(name){
+  currentName = canonical(name) || UNSIGNED;
+  if (currentName !== UNSIGNED && !notes.roster.includes(currentName)
+      && !pendingAuthors.some(n => n.toLowerCase() === currentName.toLowerCase())){
+    pendingAuthors.push(currentName);
+  }
+  saveUI();
+}
+function pinOf(name){
+  const low = String(name || '').toLowerCase();
+  return pinnedAuthors.find(p => String(p.name).toLowerCase() === low) || null;
+}
+function pinRank(name){
+  const i = pinnedAuthors.findIndex(p => String(p.name).toLowerCase() === String(name || '').toLowerCase());
+  return i < 0 ? 99 : i;
+}
+function rosterNames(){
+  const used = new Set(items().map(i => i.author));
+  const names = [];
+  const seen = new Set();
+  const push = n => {
+    if (!n || n === UNSIGNED) return;
+    const low = n.toLowerCase();
+    if (seen.has(low)) return;
+    seen.add(low);
+    names.push(canonical(n));
+  };
+  pinnedAuthors.forEach(p => push(p.name));
+  notes.roster.forEach(push);
+  pendingAuthors.forEach(push);
+  [...used].forEach(push);
+  return names.sort((a,b) => {
+    const pa = pinRank(a), pb = pinRank(b);
+    if (pa !== pb) return pa - pb;
+    const ua = used.has(a)?1:0, ub = used.has(b)?1:0;
+    return ua !== ub ? ub-ua : 0;
+  });
+}
+
+/* ── 行内标记：只有 **加粗**，加粗即"重要信息" ── */
+const plain = s => String(s).replace(/\*\*/g, '');
+const IMPORTANT = /\*\*[^*\n]+\*\*/;
+const isImp = it => !!(it && it.important) || IMPORTANT.test(it.text || '');
+function renderInline(s, q, forEdit){
+  let h = esc(String(s || '').replace(/\r\n?/g, '\n')).replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>');
+  // 编辑态必须用 <br>：contenteditable 一点击就会把裸换行收成空格。
+  if (forEdit) h = h.replace(/\n/g, '<br>');
+  if (q) h = highlight(h, q);
+  return h;
+}
+/** 只标正文，不碰标签内部。 */
+function highlight(html, q){
+  const re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'), 'gi');
+  return html.split(/(<[^>]*>)/).map(p => p.startsWith('<') ? p : p.replace(re, m => `<mark class="hit">${m}</mark>`)).join('');
+}
+/** DOM → 标记文本（保存编辑时用）。 */
+function serialize(node){
+  let out = '';
+  node.childNodes.forEach(n => {
+    if (n.nodeType === 3){ out += n.nodeValue; return; }
+    if (n.nodeType !== 1) return;
+    const tag = n.tagName.toLowerCase();
+    if (tag === 'br'){ out += '\n'; return; }
+    const inner = serialize(n);
+    if (tag === 'b' || tag === 'strong') out += `**${inner}**`;
+    else if (tag === 'div' || tag === 'p') out += (out && !out.endsWith('\n') ? '\n' : '') + inner;
+    else out += inner;
+  });
+  return out;
+}
+
+/* ── 渲染 ─────────────────────────────── */
+function render(){ renderChips(); renderOut(); $('day').value = day; }
+
+function chipButton(n, cur){
+  const pin = pinOf(n);
+  const cls = `chip${pin ? ` pin pin-${pin.kind}` : ''}${cur===n?' on':''}`;
+  const mark = pin ? `<span class="pin-mark">${esc(pin.mark)}</span>` : '';
+  return `<button class="${cls}" type="button" data-a="${esc(n)}">${mark}${esc(n)}</button>`;
+}
+function renderChips(){
+  const cur = current(), names = rosterNames();
+  const pins = names.filter(n => pinOf(n));
+  const rest = names.filter(n => !pinOf(n));
+  $('pinrow').innerHTML = pins.map(n => chipButton(n, cur)).join('');
+  let html = `<button class="chip blank${cur===UNSIGNED?' on':''}" type="button" data-a="${UNSIGNED}" title="未署名" aria-label="未署名"></button>`;
+  html += rest.map(n => chipButton(n, cur)).join('');
+  html += `<button class="chip add" type="button" id="chip-add">新作者</button>`;
+  $('chips').innerHTML = html;
+  fx('qn:author', { author: cur });
+
+  $('chipbar').querySelectorAll('[data-a]').forEach(b => b.onclick = () => {
+    setCurrent(b.dataset.a); render(); $('input').focus();
+  });
+  $('chip-add').onclick = openPop;
+}
+
+function renderOut(){
+  const list = items(), q = query.trim();
+  if (!list.length){
+    $('out').innerHTML = '<p class="hint">记下第一条，这里就按你的版式垒起来。</p>';
+    return;
+  }
+  const order = [], g = new Map();
+  list.forEach(it => {
+    if (q && !plain(it.text).toLowerCase().includes(q.toLowerCase()) && !(it.media && '图'.includes(q))) return;
+    const author = canonical(it.author);
+    if (!g.has(author)){ g.set(author, []); order.push(author); }
+    g.get(author).push(it);
+  });
+  order.sort((a, b) => pinRank(a) - pinRank(b));
+  if (!order.length){
+    $('out').innerHTML = `<p class="hint">今天没有含「${esc(q)}」的内容。</p>`;
+    return;
+  }
+  const nImp = list.filter(isImp).length;
+  let html = `<p class="odate">${esc(cnDate(day))}`
+    + `<span class="imp-n">${nImp ? nImp + ' 条重要' : ''}</span></p>`;
+  html += order.map(a => {
+    const group = g.get(a), isEd = (editing === a);
+    const body = isEd
+      // 每条一个可编辑块，几何与静止态一致；图片条目用 [图] 占位，真图留在下面
+      ? `<div class="tx" data-author="${esc(a)}" contenteditable="true">${
+          group.map(it => `<div class="eline">${it.media ? '[图]' : renderInline(it.text, '', true)}</div>`).join('')}</div>`
+        + group.filter(it => it.media).map(it =>
+            `<div class="ln img"><img class="thumb" data-media="${esc(it.media)}" alt="" /></div>`).join('')
+      : group.map(it => it.media
+          ? `<div class="ln img"><img class="thumb" data-media="${esc(it.media)}" alt="" /></div>`
+          : `<div class="ln${isImp(it) ? ' imp' : ''}"><span class="tx">${renderInline(it.text, q)}</span></div>`
+        ).join('');
+    const cue = isEd ? '' : '<span class="cue">点一下改</span>';
+    const pin = pinOf(a);
+    const mark = pin ? `<span class="pin-mark">${esc(pin.mark)}</span>` : '';
+    return `<div class="grp${pin ? ` pin pin-${pin.kind}` : ''}${isEd ? ' editing' : ''}" data-author="${esc(a)}">`
+      + `<h3 class="who">${mark}${esc(a)}${cue}</h3>${body}</div>`;
+  }).join('');
+  $('out').innerHTML = html;
+
+  // 图片懒加载
+  $('out').querySelectorAll('[data-media]').forEach(img => {
+    const u = mediaUrl(img.dataset.media);
+    if (u){ img.src = u; img.onclick = ev => { ev.stopPropagation(); window.open(u, '_blank', 'noopener'); }; }
+    else img.replaceWith(Object.assign(document.createElement('span'), { className:'tx', textContent:'[图片丢了]' }));
+  });
+
+  if (editing !== null){
+    const tx = txEl();
+    if (tx){
+      tx.focus();
+      let placed = false;
+      if (pendingCaret && document.caretRangeFromPoint){
+        const r = document.caretRangeFromPoint(pendingCaret.x, pendingCaret.y);
+        if (r && tx.contains(r.startContainer)){ const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); placed = true; }
+      }
+      if (!placed) placeCaretEnd(tx);
+    }
+    $('edithint').textContent = 'Ctrl+Z 撤销 · Ctrl+Shift+Z 重做 · Ctrl+B 加粗＝标为重要 · Ctrl+Enter 存 · Esc 撤';
+    editUndo = [editState()].filter(Boolean);
+    editRedo = [];
+  } else {
+    $('edithint').textContent = '';
+  }
+  pendingCaret = null;
+}
+function placeCaretEnd(el){
+  const r = document.createRange(); r.selectNodeContents(el); r.collapse(false);
+  const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+}
+function caretOffset(root){
+  const sel = window.getSelection();
+  if (!sel.rangeCount || !root.contains(sel.anchorNode)) return null;
+  const r = sel.getRangeAt(0);
+  const pre = r.cloneRange();
+  pre.selectNodeContents(root);
+  pre.setEnd(r.startContainer, r.startOffset);
+  return pre.toString().length;
+}
+function setCaretOffset(root, offset){
+  if (offset == null){ placeCaretEnd(root); return; }
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let left = offset, n;
+  while ((n = walker.nextNode())){
+    if (left <= n.length){
+      const r = document.createRange();
+      r.setStart(n, left); r.collapse(true);
+      const s = window.getSelection();
+      s.removeAllRanges(); s.addRange(r);
+      return;
+    }
+    left -= n.length;
+  }
+  placeCaretEnd(root);
+}
+
+/** 标准文本：右边看到的版式，一字不差。加粗写成 **…**，后端从文本也能认出重点。 */
+function standardText(){
+  const list = items();
+  if (!list.length) return '';
+  const order = [], g = new Map();
+  list.forEach(it => {
+    const author = canonical(it.author);
+    if (!g.has(author)){ g.set(author, []); order.push(author); }
+    g.get(author).push(it);
+  });
+  order.sort((a, b) => pinRank(a) - pinRank(b));
+  const body = order.map(a => a + '\n' + g.get(a).map(it =>
+    (it.media ? '[图]' : '') + it.text.trim()
+  ).filter(Boolean).join('\n')).join('\n\n');
+  return cnDate(day) + '\n\n' + body + '\n';
+}
+
+/** 后端读出的结构化载荷：作者、重要、图片都是字段。 */
+function structured(){
+  return {
+    date: day,
+    items: items().map(it => ({
+      id: it.id,
+      source: it.author,
+      text: it.text,
+      important: isImp(it),
+      media: it.media || null,
+    })),
+  };
+}
+window.luojianStructured = structured;
+
+function mediaUrl(media){
+  if (!media) return '';
+  if (/^(blob:|https?:|data:)/i.test(media)) return media;
+  return '/api/notes/media/' + String(media).split('/').map(encodeURIComponent).join('/');
+}
+
+/* ── 动作 ─────────────────────────────── */
+async function add(){
+  const el = $('input'), text = el.value.trim();
+  if (!text) return;
+  const author = current();
+  el.value = '';
+  try {
+    if (editing !== null) await commitEdit(false);
+    apply(await postJSON('/api/notes/' + encodeURIComponent(day) + '/items', { source: author, text }));
+    fx('qn:saved', { kind: 'add', author: canonical(author) });
+  } catch(e){
+    el.value = text;
+    flash(e);
+  }
+  el.focus();
+}
+async function addImage(blob){
+  if (!blob || !blob.type.startsWith('image/')) return;
+  if (blob.size > 8 * 1024 * 1024){ alert('这张图超过 8MB，先压缩一下再粘。'); return; }
+  const author = current();
+  const fd = new FormData();
+  fd.append('source', author);
+  fd.append('file', blob, 'paste.png');
+  try {
+    if (editing !== null) await commitEdit(false);
+    const res = await fetch('/api/notes/' + encodeURIComponent(day) + '/media', { method:'POST', body: fd });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(typeof data.detail === 'string' ? data.detail : '图片没能存进后端');
+    apply(data);
+    fx('qn:saved', { kind: 'add', author: canonical(author) });
+  } catch(e){
+    flash(e);
+    alert('图片没能存进后端：' + (e.message || e));
+  }
+}
+function openPop(){ $('pop').hidden = false; $('pop-input').value = ''; $('pop-input').focus(); }
+function closePop(){ $('pop').hidden = true; $('input').focus(); }
+function commitPop(){
+  const name = canonical($('pop-input').value);
+  if (!name){ closePop(); return; }
+  setCurrent(name);
+  closePop(); render(); $('input').focus();
+}
+/* ── 整组编辑 ─────────────────────────── */
+function txEl(){
+  return [...$('out').querySelectorAll('.tx[data-author]')].find(e => e.dataset.author === editing) || null;
+}
+function normBlock(d){
+  return serialize(d).replace(/\u00a0/g, ' ').replace(/\r\n?/g, '\n')
+    .split('\n').map(s => s.trimEnd()).join('\n').replace(/^\n+|\n+$/g, '');
+}
+/** 把编辑区按「条」读出来：每条一个 .eline；条内换行保留。 */
+function readBlocks(tx){
+  const elines = [...tx.querySelectorAll(':scope > .eline')];
+  if (elines.length) return elines.map(normBlock);
+  return serialize(tx).replace(/\u00a0/g, ' ').replace(/\r\n?/g, '\n')
+    .split('\n').map(s => s.trimEnd());
+}
+function collectGroup(author){
+  const lines = [];
+  const tx = [...$('out').querySelectorAll('.tx[data-author]')].find(e => e.dataset.author === author) || null;
+  if (!tx) return null;
+  const raw = readBlocks(tx);
+  while (raw.length && !raw[0].trim()) raw.shift();
+  while (raw.length && !raw[raw.length-1].trim()) raw.pop();
+  const group = items().filter(i => i.author === author);
+  const imgs = group.filter(i => i.media);
+  const texts = group.filter(i => !i.media);
+  let qi = 0, ti = 0;
+  raw.forEach(line => {
+    const t = line.trim();
+    if (t === '[图]' && qi < imgs.length){
+      lines.push({ id: imgs[qi].id, text: imgs[qi].text || '', media: imgs[qi].media, important: false });
+      qi += 1;
+    } else if (t){
+      const prev = texts[ti++];
+      const item = { text: t, important: IMPORTANT.test(t) };
+      if (prev && prev.id != null) item.id = prev.id;
+      lines.push(item);
+    }
+  });
+  while (qi < imgs.length){
+    lines.push({ id: imgs[qi].id, text: imgs[qi].text || '', media: imgs[qi].media, important: false });
+    qi += 1;
+  }
+  return lines;
+}
+let histUndo = [], histRedo = [], editUndo = [], editRedo = [], histLock = false;
+function groupSnapshot(author){
+  return items().filter(i => i.author === author).map(i => ({
+    id: i.id, text: i.text || '', media: i.media || null, important: isImp(i),
+  }));
+}
+function groupSig(list){
+  return (list || []).map(i => [i.media || '', String(i.text || '').replace(/\s+$/g, ''), i.important ? 1 : 0].join('\t')).join('\n');
+}
+function editState(){
+  const tx = txEl();
+  if (!tx) return null;
+  return { html: tx.innerHTML, caret: caretOffset(tx) };
+}
+function rememberEdit(){
+  if (histLock || editing === null) return;
+  const st = editState();
+  if (!st) return;
+  const top = editUndo[editUndo.length - 1];
+  if (top && top.html === st.html) return;
+  editUndo.push(st);
+  if (editUndo.length > 80) editUndo.shift();
+  editRedo = [];
+}
+function applyEdit(st){
+  const tx = txEl();
+  if (!tx || !st) return;
+  histLock = true;
+  tx.innerHTML = st.html;
+  setCaretOffset(tx, st.caret);
+  histLock = false;
+  tx.focus();
+}
+function undoEdit(){
+  const current = editState();
+  if (!current || !editUndo.length) return false;
+  const top = editUndo[editUndo.length - 1];
+  if (top.html !== current.html){
+    editRedo.push(current);
+    applyEdit(top);
+    return true;
+  }
+  if (editUndo.length < 2) return false;
+  editRedo.push(editUndo.pop());
+  applyEdit(editUndo[editUndo.length - 1]);
+  return true;
+}
+function redoEdit(){
+  if (!editRedo.length) return false;
+  const st = editRedo.pop();
+  const current = editState();
+  if (current && (!editUndo.length || editUndo[editUndo.length - 1].html !== current.html)) editUndo.push(current);
+  applyEdit(st);
+  return true;
+}
+async function writeGroup(author, saved){
+  const live = new Set(items().filter(i => i.author === author).map(i => i.id));
+  const body = saved.map(i => {
+    const row = { text: i.text || '', important: !!i.important };
+    if (i.media) row.media = i.media;
+    if (i.id != null && live.has(i.id)) row.id = i.id;
+    return row;
+  });
+  apply(await putJSON('/api/notes/' + encodeURIComponent(day) + '/group', { source: author, items: body }));
+}
+async function undoSaved(){
+  const step = histUndo.pop();
+  if (!step) return;
+  histRedo.push(step);
+  try { await writeGroup(step.author, step.before); }
+  catch(e){ histUndo.push(histRedo.pop()); flash(e); }
+}
+async function redoSaved(){
+  const step = histRedo.pop();
+  if (!step) return;
+  histUndo.push(step);
+  try { await writeGroup(step.author, step.after); }
+  catch(e){ histRedo.push(histUndo.pop()); flash(e); }
+}
+async function commitEdit(doRender){
+  if (editing === null) return;
+  const author = editing;
+  const before = groupSnapshot(author);
+  const payload = collectGroup(author);
+  if (payload === null){
+    editing = null;
+    $('edithint').textContent = '';
+    if (doRender !== false) render();
+    return;
+  }
+  try {
+    const data = await putJSON('/api/notes/' + encodeURIComponent(day) + '/group', {
+      source: author,
+      items: payload,
+    });
+    editing = null;
+    $('edithint').textContent = '';
+    accept(data);
+    if (payload && groupSig(before) !== groupSig(payload)){
+      histUndo.push({
+        author,
+        before,
+        after: payload.map(i => ({ id: i.id, text: i.text || '', media: i.media || null, important: !!i.important })),
+      });
+      if (histUndo.length > 40) histUndo.shift();
+      histRedo = [];
+    }
+    if (doRender !== false) render();
+    if (payload && groupSig(before) !== groupSig(payload)) fx('qn:saved', { kind: 'edit', author });
+  } catch(e){
+    flash(e);
+  }
+}
+function cancelEdit(){ editing = null; $('edithint').textContent = ''; render(); }
+
+/* ── 检索窗：材料进去后先写问题，问过的对话留在右上角 ── */
+const TALK_KEY = 'luojian.lookup.v1';
+let taskSeq = 0;
+function freshDock(){
+  taskSeq += 1;
+  return {
+    id: 'T' + taskSeq, open: false, folded: false, view: 'ask', context: '', draft: '',
+    session: 1, turns: [], pastId: null,
+  };
+}
+let dock = freshDock();
+let shelves = [];
+const talkLog = { history: [] };
+const SESSION_KEY = 'luojian.quick.session.v1';
+function noteTaskId(id){
+  const n = parseInt(String(id || '').replace(/^T/, ''), 10);
+  if (n >= taskSeq) taskSeq = n;
+}
+function packTask(task){
+  return {
+    id: task.id, open: !!task.open, folded: !!task.folded, view: task.view || 'ask',
+    context: String(task.context || '').slice(0, 12000),
+    draft: String(task.draft || '').slice(0, 4000),
+    pastId: task.pastId || null,
+    turns: (task.turns || []).slice(-20).map(turn => ({
+      local: turn.local || '',
+      id: turn.id || null,
+      context: String(turn.context || '').slice(0, 12000),
+      question: String(turn.question || '').slice(0, 4000),
+      answer: String(turn.answer || '').slice(0, 8000),
+      urls: (turn.urls || []).slice(0, 6),
+      note: turn.note || '',
+      model: turn.model || '',
+      status: turn.status || 'done',
+      at: turn.at || '',
+    })),
+  };
+}
+function unpackTask(raw){
+  const task = freshDock();
+  if (!raw || typeof raw !== 'object') return task;
+  noteTaskId(raw.id);
+  task.id = String(raw.id || task.id);
+  task.open = !!raw.open;
+  task.folded = !!raw.folded;
+  task.view = ['ask', 'history', 'past'].includes(raw.view) ? raw.view : 'ask';
+  task.context = String(raw.context || '').slice(0, 12000);
+  task.draft = String(raw.draft || '').slice(0, 4000);
+  task.pastId = raw.pastId || null;
+  task.turns = Array.isArray(raw.turns) ? raw.turns.slice(-20).map(turn => {
+    const running = turn && turn.status === 'run' && !(turn.answer || '').trim();
+    return {
+      local: (turn && turn.local) || '',
+      id: turn && turn.id || null,
+      context: String((turn && turn.context) || '').slice(0, 12000),
+      question: String((turn && turn.question) || '').slice(0, 4000),
+      answer: running ? '刷新时这次还没返回，可以再问一次。' : String((turn && turn.answer) || '').slice(0, 8000),
+      urls: (turn && turn.urls) || [],
+      note: (turn && turn.note) || '',
+      model: (turn && turn.model) || '',
+      status: running ? 'err' : ((turn && turn.status) || 'done'),
+      at: (turn && turn.at) || '',
+    };
+  }) : [];
+  return task;
+}
+function saveSession(){
+  try {
+    localStorage.setItem(SESSION_KEY, JSON.stringify({
+      day,
+      openedOn: todayStr(),
+      draft: $('input') ? $('input').value : '',
+      query,
+      dock: dock.open ? packTask(dock) : null,
+      shelves: shelves.filter(task => task.open).map(packTask),
+    }));
+  } catch(e){ /* 浏览器拒写时，已提交的速记仍在服务端。 */ }
+}
+let sessionTimer;
+function queueSession(){
+  clearTimeout(sessionTimer);
+  sessionTimer = setTimeout(saveSession, 200);
+}
+function loadSession(){
+  try {
+    const saved = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+    if (!saved || typeof saved !== 'object') return;
+    const today = todayStr();
+    const stamp = saved.openedOn || saved.day || '';
+    // 新的一天打开速记：右边只展示今天的完整记录，不接着昨天的日期、筛选和检索窗。
+    if (stamp !== today){
+      day = today;
+      query = '';
+      if ($('q')) $('q').value = '';
+      if ($('input')) $('input').value = '';
+      dock = freshDock();
+      shelves = [];
+      return;
+    }
+    if (/^\d{4}-\d{2}-\d{2}$/.test(saved.day || '')) day = saved.day;
+    if (typeof saved.draft === 'string' && $('input')) $('input').value = saved.draft;
+    if (typeof saved.query === 'string'){
+      query = saved.query;
+      if ($('q')) $('q').value = query;
+    }
+    shelves = Array.isArray(saved.shelves) ? saved.shelves.map(unpackTask).filter(task => task.open) : [];
+    if (saved.dock){
+      dock = unpackTask(saved.dock);
+      dock.open = true;
+    }
+  } catch(e){ /* 坏掉的会话不影响今天的速记。 */ }
+}
+function safeUrl(value){
+  try {
+    const u = new URL(String(value || ''));
+    return u.protocol === 'http:' || u.protocol === 'https:' ? u.href : '';
+  } catch { return ''; }
+}
+function clip(value, n){
+  const t = String(value || '').replace(/\s+/g, ' ').trim();
+  return t.length > n ? t.slice(0, n) + '…' : t;
+}
+function clock(iso){
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  const p = n => String(n).padStart(2, '0');
+  return `${d.getMonth() + 1}月${d.getDate()}日 ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+function talkId(row){ return row.local ? String(row.local) : String(row.id != null ? row.id : ''); }
+function isToday(iso){
+  if (!iso) return true;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return true;
+  const n = new Date();
+  return d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth() && d.getDate() === n.getDate();
+}
+function hm(iso){
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  const p = n => String(n).padStart(2, '0');
+  return `${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+function rowKey(row){
+  const mark = row.local || row.client_id;
+  return mark ? 'c:' + mark : 'id:' + row.id;
+}
+function richer(current, incoming){
+  const text = row => (row.answer || row.note || '').trim();
+  const has = text(current);
+  const next = text(incoming);
+  if (has && !next) return current;
+  if (next && !has) return incoming;
+  const rank = row => row.status === 'done' ? 2 : row.status === 'err' ? 1 : 0;
+  return rank(incoming) >= rank(current) ? incoming : current;
+}
+function loadTalks(){
+  try {
+    const saved = JSON.parse(localStorage.getItem(TALK_KEY) || '[]');
+    talkLog.history = Array.isArray(saved) ? saved.filter(isToday) : [];
+  } catch { talkLog.history = []; }
+}
+function saveTalks(){
+  try { localStorage.setItem(TALK_KEY, JSON.stringify(talkLog.history.filter(row => isToday(row.at)).slice(0, 300))); }
+  catch { /* 浏览器拒写时，服务端记录仍在。 */ }
+}
+function mergeTalks(rows){
+  const byKey = new Map();
+  for (const row of [...talkLog.history, ...rows]){
+    if (!row || !row.question) continue;
+    const key = rowKey(row);
+    byKey.set(key, byKey.has(key) ? richer(byKey.get(key), row) : row);
+  }
+  talkLog.history = [...byKey.values()].sort((a, b) => (Date.parse(b.at) || 0) - (Date.parse(a.at) || 0)).slice(0, 300);
+  saveTalks();
+}
+function fromServer(row){
+  const failed = row.provider === 'error';
+  return {
+    id: row.id,
+    local: row.client_id || null,
+    client_id: row.client_id || '',
+    context: row.context || '',
+    question: row.question || '',
+    answer: row.answer || '',
+    urls: row.urls || [],
+    note: '',
+    model: row.model || '',
+    status: failed ? 'err' : (row.answer ? 'done' : 'run'),
+    at: row.created_at || '',
+  };
+}
+async function refreshTalks(){
+  try {
+    const data = await req('/api/lookups?day=' + encodeURIComponent(todayStr()));
+    mergeTalks((data.items || []).map(fromServer));
+    if (dock.open && dock.view !== 'ask') renderDock();
+  } catch { /* 本地记录还在。 */ }
+}
+function stripDsml(value){
+  return String(value || '')
+    .replace(/<\s*｜+\s*DSML\s*｜+\s*invoke\b[^>]*>[\s\S]*?<\s*\/\s*｜+\s*DSML\s*｜+\s*invoke\s*>/gi, '')
+    .replace(/<\s*\/?\s*｜+\s*DSML\s*｜+[^>]*>/gi, '')
+    .trim();
+}
+function inlineAnswer(value){
+  let text = esc(value);
+  text = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>');
+  text = text.replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>');
+  text = text.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+  return text;
+}
+function formatAnswer(value){
+  const cleaned = stripDsml(value);
+  if (!cleaned) return '<p class="dock-meta">这次没有整理成可读的回答。</p>';
+  let html = '', list = '';
+  const flush = () => { if (list){ html += `<ul class="dock-list">${list}</ul>`; list = ''; } };
+  cleaned.replace(/\r\n/g, '\n').split('\n').forEach(line => {
+    const item = line.match(/^\s*(?:[-*]|[0-9]+[.、])\s+(.+)/);
+    const head = line.match(/^#{1,3}\s+(.+)/);
+    if (item){ list += `<li>${inlineAnswer(item[1])}</li>`; return; }
+    flush();
+    if (!line.trim()) return;
+    html += head ? `<p class="dock-h">${inlineAnswer(head[1])}</p>` : `<p>${inlineAnswer(line)}</p>`;
+  });
+  flush();
+  return html;
+}
+function srcList(urls){
+  return (urls || []).map(u => {
+    const href = safeUrl(u && u.url);
+    if (!href) return '';
+    return `<li><a href="${esc(href)}" target="_blank" rel="noreferrer">${esc((u && u.title) || href)}</a></li>`;
+  }).join('');
+}
+function captureDraft(){
+  const el = document.querySelector('.dock-q');
+  if (el) dock.draft = el.value;
+}
+function taskBusy(task){ return task.turns.some(item => item.status === 'run'); }
+function gistRaw(task){
+  const first = task.turns.find(turn => (turn.question || '').trim());
+  return (first && first.question) || task.draft || task.context || (task.view === 'history' ? '调用记录' : '新问题');
+}
+function tabLabel(task){
+  const gist = clip(gistRaw(task), 12);
+  return taskBusy(task) ? `在查·${gist}` : gist;
+}
+function renderTabs(){
+  const host = $('dock-tabs');
+  const folded = shelves.concat(dock.open && dock.folded ? [dock] : []);
+  host.hidden = !folded.length;
+  host.classList.toggle('beside', !!(dock.open && !dock.folded));
+  host.innerHTML = folded.map((task, i) => {
+    const label = tabLabel(task);
+    return `<button type="button" class="dock-tab${taskBusy(task) ? ' busy' : ''}" ${i === 0 ? 'id="dock-tab"' : ''} data-task="${esc(task.id)}" aria-label="${esc(label)}">${esc(label)}</button>`;
+  }).join('');
+}
+function dockTitle(){
+  if (dock.view === 'history') return '调用记录';
+  if (dock.view === 'past'){
+    const row = talkLog.history.find(item => talkId(item) === String(dock.pastId));
+    return clip((row && row.question) || '这次对话', 18);
+  }
+  return clip(gistRaw(dock), 18);
+}
+function renderDock(opts){
+  const box = $('dock');
+  const typing = document.activeElement && document.activeElement.classList && document.activeElement.classList.contains('dock-q');
+  if (opts && opts.clear) dock.draft = '';
+  else if (typing) dock.draft = document.activeElement.value;
+  const show = dock.open && !dock.folded;
+  box.hidden = !show;
+  renderTabs();
+  $('btn-talks').classList.toggle('on', show && dock.view !== 'ask');
+  if (!show){ box.innerHTML = ''; saveSession(); return; }
+  const title = dockTitle();
+  let body = '';
+  let compose = '';
+  if (dock.view === 'history'){
+    const rows = talkLog.history.filter(row => isToday(row.at));
+    body = rows.map(row => {
+      const piece = clip(row.context || row.question, 72);
+      const ask = row.context ? clip(row.question, 48) : '';
+      const state = row.status === 'run' ? '正在问' : row.status === 'err' ? '没问成' : '';
+      return `<button type="button" class="talk" data-act="open" data-id="${esc(talkId(row))}"><span class="talk-time">${esc(hm(row.at))}${state ? ' · ' + esc(state) : ''}</span><span class="talk-piece">${esc(piece)}</span>${ask ? `<span class="talk-ask">${esc(ask)}</span>` : ''}</button>`;
+    }).join('') || '<p class="hint">今天还没有调用记录。</p>';
+  } else if (dock.view === 'past'){
+    const row = talkLog.history.find(item => talkId(item) === String(dock.pastId));
+    const said = row ? (row.answer || row.note || '') : '';
+    const answerHtml = !row ? '' : said
+      ? `<div class="dock-ans${row.status === 'err' ? ' err' : ''}">${row.status === 'err' ? esc(said) : formatAnswer(said)}</div>`
+      : '<p class="dock-meta">正在检索…</p>';
+    body = row ? `<button type="button" class="dock-back" data-act="back">全部记录</button><p class="dock-k">${esc(clock(row.at))}${row.model ? ' · ' + esc(row.model) : ''}</p>${row.context ? `<p class="dock-k">材料</p><blockquote class="dock-piece">${esc(row.context)}</blockquote>` : ''}<p class="dock-k">问题</p><p class="dock-ask">${esc(row.question)}</p><p class="dock-k">回答</p>${answerHtml}${srcList(row.urls) ? `<ul class="dock-src">${srcList(row.urls)}</ul>` : ''}` : '<p class="hint">这条记录不在了。</p>';
+  } else {
+    const turns = dock.turns.map(turn => {
+      const waiting = turn.status === 'run';
+      const failed = turn.status === 'err';
+      const src = srcList(turn.urls);
+      return `<section class="dock-turn"><p class="dock-ask">${esc(turn.question)}</p>${waiting ? '<p class="dock-meta">正在检索…</p>' : `<div class="dock-ans${failed ? ' err' : ''}">${failed ? esc(turn.answer || '') : formatAnswer(turn.answer || '')}</div>`}${turn.note ? `<p class="dock-meta">${esc(turn.note)}</p>` : ''}${src ? `<ul class="dock-src">${src}</ul>` : ''}</section>`;
+    }).join('');
+    const lead = dock.turns.length ? '' : '<p class="dock-meta">先写下要问的问题，回车再去查。</p>';
+    body = `${dock.context ? `<p class="dock-k">材料</p><blockquote class="dock-piece">${esc(dock.context)}</blockquote>${lead}` : '<p class="dock-meta">框选一段，Alt+Enter 丢进来。</p>'}${turns}`;
+    compose = `<div class="dock-compose"><textarea class="dock-q" id="dock-q" rows="1" maxlength="4000" placeholder="就这段，你想问什么" aria-label="要问的问题" spellcheck="false">${esc(dock.draft)}</textarea><button type="button" class="dock-send" data-act="send"${taskBusy(dock) ? ' disabled' : ''}>去问</button></div>`;
+  }
+  box.innerHTML = `<header class="dock-bar"><h2 class="dock-title">${title}</h2><div class="dock-acts"><button type="button" data-act="fold">折</button><button type="button" data-act="close">关</button></div></header><div class="dock-body">${body}</div>${compose}`;
+  const input = box.querySelector('.dock-q');
+  if (input && ((opts && opts.focus) || typing)){
+    input.focus();
+    const n = input.value.length;
+    input.setSelectionRange(n, n);
+  }
+  saveSession();
+}
+function parkDock(){
+  if (!dock.open) return;
+  dock.folded = true;
+  shelves.push(dock);
+  dock = freshDock();
+}
+function openAsk(material){
+  const text = (material || '').trim();
+  if (!text) return;
+  captureDraft();
+  const next = text.slice(0, 12000);
+  if (dock.open && dock.context && dock.context !== next) parkDock();
+  if (!dock.open){
+    dock.session += 1;
+    dock.turns = [];
+    dock.draft = '';
+  }
+  dock.open = true;
+  dock.folded = false;
+  dock.view = 'ask';
+  dock.context = next;
+  renderDock({focus: true});
+}
+function rememberTurn(turn){
+  mergeTalks([{
+    id: turn.id || null,
+    local: turn.local,
+    client_id: turn.local,
+    context: turn.context,
+    question: turn.question,
+    answer: turn.answer || '',
+    urls: turn.urls || [],
+    note: turn.note || '',
+    model: turn.model || '',
+    status: turn.status,
+    at: turn.at,
+  }]);
+}
+async function submitAsk(){
+  captureDraft();
+  const task = dock;
+  const question = task.draft.trim();
+  if (!question || taskBusy(task)) return;
+  const session = task.session;
+  const turn = {
+    local: 'L' + Date.now(),
+    context: task.context.trim().slice(0, 12000),
+    question: question.slice(0, 4000),
+    answer: '', urls: [], note: '', model: '',
+    status: 'run', at: new Date().toISOString(),
+  };
+  task.turns.push(turn);
+  task.draft = '';
+  task.view = 'ask';
+  rememberTurn(turn);
+  if (dock === task) renderDock({focus: true, clear: true});
+  else renderTabs();
+  try {
+    const data = await postJSON('/api/notes/lookup', { query: turn.question, context: turn.context, client_id: turn.local });
+    turn.status = 'done';
+    turn.answer = data.text || '';
+    turn.urls = data.urls || [];
+    turn.note = data.note || '';
+    turn.model = data.model || '';
+    turn.id = data.id || null;
+    turn.at = data.created_at || turn.at;
+    rememberTurn(turn);
+  } catch(err){
+    turn.status = 'err';
+    turn.answer = err.message || String(err);
+    turn.note = '';
+    rememberTurn(turn);
+  }
+  if (dock === task && task.session === session) renderDock({focus: task.view === 'ask'});
+  else renderTabs();
+}
+function closeDock(){
+  captureDraft();
+  if (shelves.length){
+    dock = shelves.pop();
+    dock.open = true;
+    dock.folded = true;
+    renderDock();
+    return;
+  }
+  dock = freshDock();
+  renderDock();
+}
+function focusTask(id){
+  captureDraft();
+  if (dock.id === id){
+    dock.open = true;
+    dock.folded = false;
+    renderDock({focus: dock.view === 'ask'});
+    return;
+  }
+  const index = shelves.findIndex(task => task.id === id);
+  if (index < 0) return;
+  const next = shelves.splice(index, 1)[0];
+  if (dock.open){
+    dock.folded = true;
+    shelves.push(dock);
+  }
+  dock = next;
+  dock.open = true;
+  dock.folded = false;
+  renderDock({focus: dock.view === 'ask'});
+}
+$('dock').addEventListener('click', e => {
+  const act = e.target.closest('[data-act]');
+  if (!act) return;
+  if (act.dataset.act === 'fold'){ captureDraft(); dock.folded = true; renderDock(); }
+  else if (act.dataset.act === 'close') closeDock();
+  else if (act.dataset.act === 'back'){ dock.view = 'history'; dock.pastId = null; renderDock(); }
+  else if (act.dataset.act === 'send') submitAsk();
+  else if (act.dataset.act === 'open'){ dock.pastId = act.dataset.id; dock.view = 'past'; renderDock(); }
+});
+$('dock').addEventListener('keydown', e => {
+  if (e.key === 'Escape'){
+    e.preventDefault();
+    e.stopPropagation();
+    captureDraft();
+    dock.folded = true;
+    renderDock();
+    return;
+  }
+  if (e.key !== 'Enter' || e.shiftKey || e.isComposing || e.altKey || e.ctrlKey || e.metaKey) return;
+  if (!e.target.classList || !e.target.classList.contains('dock-q')) return;
+  e.preventDefault();
+  submitAsk();
+});
+$('dock-tabs').addEventListener('click', e => {
+  const tab = e.target.closest('[data-task]');
+  if (tab) focusTask(tab.dataset.task);
+});
+$('btn-talks').addEventListener('click', () => {
+  if (dock.open && !dock.folded && dock.view !== 'ask'){
+    dock.view = 'ask';
+    renderDock({focus: true});
+    return;
+  }
+  captureDraft();
+  dock.open = true;
+  dock.folded = false;
+  dock.view = 'history';
+  renderDock();
+  refreshTalks();
+});
+/* 左右框快捷键统一：Ctrl+B 加粗（左边写成 **…**），Alt+Enter 拿选中文字去搜索。 */
+function toggleBoldInField(el){
+  const v = el.value;
+  let s = el.selectionStart, t = el.selectionEnd;
+  el.focus();
+  if (s === t){
+    el.setSelectionRange(s, t);
+    document.execCommand('insertText', false, '****');
+    el.setSelectionRange(s + 2, s + 2);
+    return;
+  }
+  const sel = v.slice(s, t);
+  if (s >= 2 && v.slice(s - 2, s) === '**' && v.slice(t, t + 2) === '**'){
+    el.setSelectionRange(s - 2, t + 2);
+    document.execCommand('insertText', false, sel);
+    el.setSelectionRange(s - 2, t - 2);
+    return;
+  }
+  if (sel.length >= 4 && sel.startsWith('**') && sel.endsWith('**')){
+    const inner = sel.slice(2, -2);
+    document.execCommand('insertText', false, inner);
+    el.setSelectionRange(s, s + inner.length);
+    return;
+  }
+  const wrapped = sel.split('\n').map(x => x.trim() ? '**' + x + '**' : x).join('\n');
+  document.execCommand('insertText', false, wrapped);
+  if (!sel.includes('\n')) el.setSelectionRange(s + 2, s + 2 + sel.length);
+  else el.setSelectionRange(s, s + wrapped.length);
+}
+$('input').addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey && !e.isComposing && e.key.toLowerCase() === 'b'){
+    e.preventDefault();
+    toggleBoldInField($('input'));
+    return;
+  }
+  if (e.key !== 'Enter' || e.isComposing) return;
+  if (e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey){
+    const el = $('input');
+    const picked = el.selectionStart !== el.selectionEnd
+      ? el.value.slice(el.selectionStart, el.selectionEnd).trim()
+      : '';
+    if (!picked) return;
+    e.preventDefault();
+    openAsk(picked);
+    return;
+  }
+  if ((e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey){
+    e.preventDefault();
+    locked(add);
+  }
+});
+$('pop-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter'){ e.preventDefault(); commitPop(); }
+  if (e.key === 'Escape'){ e.preventDefault(); closePop(); }
+});
+$('pop-input').addEventListener('blur', () => { if (!$('pop').hidden) closePop(); });
+$('q').addEventListener('input', e => {
+  locked(async () => {
+    await commitEdit(false);
+    query = e.target.value;
+    queueSession();
+    renderOut();
+  });
+});
+
+function inField(el){
+  return !!el && (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT');
+}
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.key === 'z' || e.key === 'Z' || e.key === 'y' || e.key === 'Y')){
+    if (inField(e.target)) return;
+    const redo = e.key.toLowerCase() === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey);
+    e.preventDefault();
+    if (editing !== null){
+      if (redo) redoEdit(); else undoEdit();
+      return;
+    }
+    locked(() => redo ? redoSaved() : undoSaved());
+    return;
+  }
+  if (e.key === 'Enter' && e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.isComposing && !inField(e.target)){
+    const sel = window.getSelection();
+    const picked = sel && sel.rangeCount && !sel.isCollapsed && $('out').contains(sel.getRangeAt(0).commonAncestorContainer)
+      ? sel.toString().trim()
+      : '';
+    if (picked){
+      e.preventDefault();
+      openAsk(picked);
+      return;
+    }
+  }
+  if (e.key === 'Escape' && editing !== null){ cancelEdit(); return; }
+  if (editing !== null && e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !e.isComposing){
+    e.preventDefault();
+    locked(() => commitEdit(true));
+    return;
+  }
+  if (editing !== null && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b'){
+    e.preventDefault();
+    document.execCommand('bold');
+  }
+});
+
+$('out').addEventListener('click', e => {
+  const grp = e.target.closest('.grp');
+  const a = grp ? grp.dataset.author : null;
+  if (a !== null && a === editing) return;
+  const had = editing !== null;
+  locked(async () => {
+    if (had) await commitEdit(false);
+    if (a !== null){ pendingCaret = { x:e.clientX, y:e.clientY }; editing = a; }
+    if (had || a !== null) render();
+  });
+});
+
+document.addEventListener('paste', e => {
+  const dt = e.clipboardData; if (!dt) return;
+  if (e.target.closest && e.target.closest('.tx[contenteditable]')) return;
+  const files = [...dt.items].filter(i => i.kind === 'file' && i.type.startsWith('image/')).map(i => i.getAsFile());
+  if (!files.length) return;
+  e.preventDefault();
+  const text = dt.getData('text/plain');
+  locked(async () => {
+    if (text.trim()){
+      await postJSON('/api/notes/' + encodeURIComponent(day) + '/items', { source: current(), text: text.trim() });
+    }
+    for (const f of files) await addImage(f);
+  });
+});
+/* 编辑区里：Enter = 新起一条（和左边输入框一个手感），Shift+Enter = 同一条内换行。
+   Ctrl+Enter 留给"保存"。 */
+$('out').addEventListener('beforeinput', e => {
+  if (editing !== null && e.target.closest && e.target.closest('.tx[contenteditable]')) rememberEdit();
+});
+$('out').addEventListener('keydown', e => {
+  if (editing === null || e.key !== 'Enter' || e.isComposing) return;
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  const tx = e.target.closest && e.target.closest('.tx[contenteditable]');
+  if (!tx) return;
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+  const r = sel.getRangeAt(0);
+  const node = r.startContainer.nodeType === 1 ? r.startContainer : r.startContainer.parentElement;
+  const el = node && node.closest ? node.closest('.eline') : null;
+  if (!el || !tx.contains(el)) return;
+  rememberEdit();
+
+  if (e.shiftKey){
+    e.preventDefault();
+    document.execCommand('insertLineBreak');
+    return;
+  }
+  e.preventDefault();
+  const rest = document.createRange();
+  rest.setStart(r.endContainer, r.endOffset);
+  rest.setEndAfter(el.lastChild || el);
+  const frag = rest.extractContents();
+  const nb = document.createElement('div');
+  nb.className = 'eline';
+  nb.appendChild(frag);
+  el.after(nb);
+  const nr = document.createRange(); nr.selectNodeContents(nb); nr.collapse(true);
+  sel.removeAllRanges(); sel.addRange(nr);
+  if (!el.textContent.trim() && !el.querySelector('b,strong')) el.remove();
+});
+
+function htmlToPlain(html){
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const blocks = new Set(['P','DIV','LI','H1','H2','H3','H4','H5','H6','TR','BLOCKQUOTE']);
+  let out = '';
+  const walk = node => {
+    if (node.nodeType === 3){ out += node.nodeValue; return; }
+    if (node.nodeType !== 1) return;
+    const tag = node.tagName;
+    if (tag === 'STYLE' || tag === 'SCRIPT') return;
+    if (tag === 'BR'){ out += '\n'; return; }
+    const block = blocks.has(tag);
+    if (block && out && !out.endsWith('\n')) out += '\n';
+    node.childNodes.forEach(walk);
+    if (block && out && !out.endsWith('\n')) out += '\n';
+  };
+  if (doc.body) walk(doc.body);
+  return out;
+}
+function pastedBlocks(text){
+  return text.replace(/\r\n?/g, '\n').split('\n')
+    .map(s => s.replace(/\u00a0/g, ' ').trim().replace(/^(?:[-*•·▪▸►]|\d{1,3}[.、.)])\s+/, ''))
+    .filter(Boolean);
+}
+function insertBlocks(tx, blocks){
+  const sel = window.getSelection();
+  if (!sel.rangeCount || !blocks.length) return;
+  let r = sel.getRangeAt(0);
+  if (!tx.contains(r.startContainer)) return;
+  if (!r.collapsed) r.deleteContents();
+  const node = r.startContainer.nodeType === 1 ? r.startContainer : r.startContainer.parentElement;
+  let el = node && node.closest ? node.closest('.eline') : null;
+  if (!el || !tx.contains(el)){
+    el = document.createElement('div');
+    el.className = 'eline';
+    tx.appendChild(el);
+    const nr = document.createRange(); nr.selectNodeContents(el); nr.collapse(true);
+    sel.removeAllRanges(); sel.addRange(nr);
+    return insertBlocks(tx, blocks);
+  }
+  r = sel.getRangeAt(0);
+  const last = [...tx.querySelectorAll(':scope > .eline')].pop();
+  const after = document.createRange();
+  after.selectNodeContents(el);
+  after.setStart(r.endContainer, r.endOffset);
+  const atEnd = el === last && !after.toString().trim();
+  if (atEnd){
+    let anchor = el;
+    blocks.forEach(s => {
+      const nb = document.createElement('div');
+      nb.className = 'eline';
+      nb.textContent = s;
+      anchor.after(nb);
+      anchor = nb;
+    });
+    const nr = document.createRange(); nr.selectNodeContents(anchor); nr.collapse(false);
+    sel.removeAllRanges(); sel.addRange(nr);
+    return;
+  }
+  const first = document.createTextNode(blocks[0]);
+  r.insertNode(first);
+  if (blocks.length === 1){
+    const nr = document.createRange(); nr.setStartAfter(first); nr.collapse(true);
+    sel.removeAllRanges(); sel.addRange(nr);
+    return;
+  }
+  const rest = document.createRange();
+  rest.setStartAfter(first);
+  rest.setEndAfter(el.lastChild || el);
+  const frag = rest.extractContents();
+  let anchor = el;
+  for (let i = 1; i < blocks.length; i++){
+    const nb = document.createElement('div');
+    nb.className = 'eline';
+    nb.textContent = blocks[i];
+    if (i === blocks.length - 1) nb.appendChild(frag);
+    anchor.after(nb);
+    anchor = nb;
+  }
+  const caret = document.createRange();
+  caret.setStart(anchor.firstChild || anchor, anchor.firstChild ? anchor.firstChild.length : 0);
+  caret.collapse(true);
+  sel.removeAllRanges(); sel.addRange(caret);
+}
+$('out').addEventListener('paste', e => {
+  const tx = e.target.closest && e.target.closest('.tx[contenteditable]');
+  if (!tx || editing === null) return;
+  const dt = e.clipboardData;
+  if (!dt) return;
+  const files = [...dt.items].filter(i => i.kind === 'file' && i.type.startsWith('image/'));
+  const raw = dt.getData('text/plain') || htmlToPlain(dt.getData('text/html') || '');
+  if (files.length && !raw.trim()){ e.preventDefault(); return; }
+  if (!raw.trim()) return;
+  e.preventDefault();
+  rememberEdit();
+  insertBlocks(tx, pastedBlocks(raw));
+});
+const left = $('left');
+['dragenter','dragover'].forEach(t => left.addEventListener(t, e => {
+  if ([...(e.dataTransfer?.types||[])].includes('Files')){ e.preventDefault(); left.classList.add('drag'); }
+}));
+left.addEventListener('dragleave', e => { if (e.target === left || !left.contains(e.relatedTarget)) left.classList.remove('drag'); });
+left.addEventListener('drop', e => {
+  e.preventDefault(); left.classList.remove('drag');
+  [...(e.dataTransfer?.files||[])].filter(f => f.type.startsWith('image/')).forEach(f => locked(() => addImage(f)));
+});
+
+$('day').addEventListener('change', e => {
+  locked(async () => {
+    await commitEdit(false);
+    day = e.target.value || todayStr();
+    saveSession();
+    currentName = UNSIGNED;
+    loadUI();
+    await refresh();
+  });
+});
+$('btn-copy').onclick = async () => {
+  const text = standardText(); if (!text) return;
+  let ok = false;
+  try { await navigator.clipboard.writeText(text); ok = true; }
+  catch(err){
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(ta); ta.select();
+    try { ok = document.execCommand('copy'); } catch(e2){ ok = false; }
+    ta.remove();
+  }
+  if (ok){ const b = $('btn-copy'); b.textContent = '已复制'; setTimeout(() => { b.textContent = '复制'; }, 1400); }
+};
+$('btn-clear').onclick = () => {
+  if (!items().length) return;
+  if (!confirm(`清空 ${day} 的全部速记？`)) return;
+  locked(async () => {
+    editing = null;
+    apply(await del('/api/notes/' + encodeURIComponent(day)));
+  });
+};
+
+const SAMPLE = [
+  ['Agent', ['期权和树都是空 - 要小心点 - 全员卖C','BE被做空：中国稀土 - AI电力账期延长','注意下9月30 **SOFR 的压力测试**']],
+  ['策略', ['混天绫加仓亨通，白银有色，稳健博弈小幅拿中际旭创','衍生品：动量、景气因子 恢复']],
+  ['VITO', ['中午中债和地产一起涨，**预测降准降息**','新规要求封顶才能卖，账期变长，地产供给收缩具备制度刚性','放缓倡议被定价成一天的情绪冲击','债券市场比FED还鹰派','市场在杀融资 - 康宁 CoreWeave','算力链看多（置信中）、存储看多（置信中）、靠外部融资扩张的 AI 基建看空（置信中）、网络安全看多（置信低）、能源与大宗中性（预期走平，置信低）','老老实实存电光CPU','见面预期没有突破型进展，NV会见一个高点在见面的时候','服务器没什么Alpha，戴尔毛利率也起不来，实在是没有业绩 - 只能proofAI硬件的利润率 也就是高景气度','日本鸽派加息 - 日元净多头寸可能会对美国流动性有负面影响（置信度低）']],
+  ['雨神', ['明天祖训完了看承接，科技要么做etf要么做之前的抱团大票']],
+  ['老王', ['看多光模块 但别追高 —— 新名字直接记，不用先登记']],
+];
+function sampleChart(){
+  const c = document.createElement('canvas'); c.width = 460; c.height = 150;
+  const x = c.getContext('2d');
+  x.fillStyle = '#fffdf7'; x.fillRect(0,0,460,150);
+  x.strokeStyle = '#dcded0'; x.beginPath();
+  for (let i = 1; i < 5; i++){ x.moveTo(0, i*30); x.lineTo(460, i*30); }
+  x.stroke();
+  x.strokeStyle = '#284b3d'; x.lineWidth = 2; x.beginPath();
+  const pts = [110,96,104,78,86,58,64,40,52,30,44,22];
+  pts.forEach((v,i) => { const px = 14 + i*(432/(pts.length-1)); i ? x.lineTo(px,v) : x.moveTo(px,v); });
+  x.stroke();
+  x.fillStyle = '#8a8f83'; x.font = '12px sans-serif'; x.fillText('示例图：直接粘截图就是这条路', 14, 140);
+  return new Promise(r => c.toBlob(r, 'image/png'));
+}
+$('btn-sample').onclick = () => locked(async () => {
+  if (items().length && !confirm('今天已经有内容了，示例会追加在后面，继续？')) return;
+  const batch = [];
+  SAMPLE.forEach(([author, lines]) => lines.forEach(text => {
+    batch.push({ source: author, text, important: IMPORTANT.test(text) });
+  }));
+  apply(await postJSON('/api/notes/' + encodeURIComponent(day) + '/items', { items: batch }));
+  try {
+    const blob = await sampleChart();
+    if (blob){
+      const prev = currentName;
+      setCurrent('VITO');
+      await addImage(blob);
+      setCurrent(prev);
+    }
+  } catch(e){ /* 没有 canvas 就跳过 */ }
+});
+
+loadTalks();
+loadSession();
+loadUI();
+$('day').value = day;
+renderDock();
+refresh().catch(flash);
+refreshTalks();
+$('input').addEventListener('input', queueSession);
+window.addEventListener('pagehide', saveSession);
+$('input').focus();
+})();
+</script>
+<script type="module">
+/* 环境层：整页浅蓝 / 石板灰浮点 + 近邻细连线，跟鼠标轻微视差；
+   存下时一圈淡蓝涟漪从左栏漾向右边那一组；换作者时 chip 处一个小脉冲。
+   纯装饰：three.js 加载失败 / 没有 WebGL 时什么也不画，页面照常。 */
+const canvas = document.getElementById('bgfx');
+const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+const root = document.documentElement;
+const URLS = [
+  'https://unpkg.com/three@0.160.0/build/three.module.js',
+  'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js',
+];
+async function loadThree(){
+  for (const u of URLS){
+    try { return await Promise.race([import(u), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 7000))]); }
+    catch (e) { /* 下一个 CDN */ }
+  }
+  throw new Error('three.js 没加载到');
+}
+let fxSaved = () => {}, fxAuthor = () => {};
+let lastAuthor = null;
+window.addEventListener('qn:saved', e => {
+  const d = e.detail || {};
+  const grp = d.author != null ? [...document.querySelectorAll('#out .grp[data-author]')].find(g => g.dataset.author === d.author) : null;
+  if (grp && !reduceMQ.matches && !grp.classList.contains('editing')){ grp.classList.remove('qn-new'); void grp.offsetWidth; grp.classList.add('qn-new'); }
+  fxSaved(d, grp);
+});
+window.addEventListener('qn:author', e => {
+  const a = e.detail && e.detail.author;
+  if (lastAuthor !== null && a !== lastAuthor) fxAuthor();
+  lastAuthor = a;
+});
+
+(async () => {
+  let THREE, renderer;
+  try {
+    THREE = await loadThree();
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'low-power' });
+  } catch (e) { root.dataset.gl = 'fallback'; return; }
+  const DPR = () => Math.min(window.devicePixelRatio || 1, 1.5);
+  renderer.setPixelRatio(DPR());
+  renderer.setClearColor(0xffffff, 0);
+  const scene = new THREE.Scene();
+  const camera = new THREE.Camera();   // 着色器按像素坐标直接出图
+
+  let W = innerWidth, H = innerHeight;
+  const U = {
+    uSize: { value: new THREE.Vector2(W, H) }, uPixel: { value: renderer.getPixelRatio() }, uDim: { value: 1 },
+    uR1: { value: new THREE.Vector4(0, 0, 0, 0) },   // 行进涟漪：x, y, 半径, 强度
+    uR2: { value: new THREE.Vector4(0, 0, 0, 0) },   // 起点 / chip 脉冲
+  };
+  const toClip = `vec4 clip(vec2 p){ return vec4(p.x / uSize.x * 2.0 - 1.0, 1.0 - p.y / uSize.y * 2.0, 0.0, 1.0); }`;
+
+  /* 粒子：CPU 模拟（为了连线），每帧上传位置 */
+  const N = Math.round(Math.min(400, Math.max(250, W * H / 4200)));
+  const P = Array.from({ length: N }, () => {
+    const z = Math.random();
+    return { x: Math.random() * W, y: Math.random() * H, z,
+      vx: (Math.random() - 0.5) * 10, vy: -(3 + Math.random() * 9),
+      ix: 0, iy: 0, ph: Math.random() * 6.283, blue: Math.random() < 0.55 ? 1 : 0 };
+  });
+  const pPos = new Float32Array(N * 3), pAttr = new Float32Array(N * 3);
+  P.forEach((p, i) => { pAttr[i*3] = p.z; pAttr[i*3+1] = p.blue; pAttr[i*3+2] = p.ph; });
+  const pg = new THREE.BufferGeometry();
+  pg.setAttribute('position', new THREE.BufferAttribute(pPos, 3).setUsage(THREE.DynamicDrawUsage));
+  pg.setAttribute('aAttr', new THREE.BufferAttribute(pAttr, 3));
+  const points = new THREE.Points(pg, new THREE.ShaderMaterial({
+    uniforms: U, transparent: true, depthTest: false, depthWrite: false,
+    vertexShader: `
+      uniform vec2 uSize; uniform float uPixel; attribute vec3 aAttr; varying float vA; varying float vBlue;
+      ${toClip}
+      void main(){
+        float z = aAttr.x;
+        vBlue = aAttr.y;
+        vA = 0.35 + 0.2 * z;
+        gl_Position = clip(position.xy);
+        gl_PointSize = (2.2 + z * 4.2 + position.z * 3.0) * uPixel;   // position.z = 涟漪推开时的放大
+      }`,
+    fragmentShader: `
+      precision mediump float; uniform float uDim; varying float vA; varying float vBlue;
+      void main(){
+        float d = length(gl_PointCoord - 0.5); float a = smoothstep(0.5, 0.28, d);
+        vec3 c = mix(vec3(0.44, 0.50, 0.60), vec3(0.18, 0.52, 0.98), vBlue);  // 石板灰 / #007aff 系
+        gl_FragColor = vec4(c, a * vA * uDim);
+      }`,
+  }));
+  points.frustumCulled = false; points.renderOrder = 2; scene.add(points);
+
+  /* 近邻细连线 */
+  const MAXL = 1400, LINK = 115;
+  const lPos = new Float32Array(MAXL * 2 * 3), lA = new Float32Array(MAXL * 2);
+  const lg = new THREE.BufferGeometry();
+  lg.setAttribute('position', new THREE.BufferAttribute(lPos, 3).setUsage(THREE.DynamicDrawUsage));
+  lg.setAttribute('aA', new THREE.BufferAttribute(lA, 1).setUsage(THREE.DynamicDrawUsage));
+  const lines = new THREE.LineSegments(lg, new THREE.ShaderMaterial({
+    uniforms: U, transparent: true, depthTest: false, depthWrite: false,
+    vertexShader: `uniform vec2 uSize; attribute float aA; varying float vA; ${toClip} void main(){ vA = aA; gl_Position = clip(position.xy); }`,
+    fragmentShader: `precision mediump float; uniform float uDim; varying float vA; void main(){ gl_FragColor = vec4(0.30, 0.50, 0.82, vA * uDim); }`,
+  }));
+  lines.frustumCulled = false; lines.renderOrder = 1; scene.add(lines);
+
+  /* 涟漪 / 脉冲：全屏一张面，按像素画两圈柔边环 */
+  const rings = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({
+    uniforms: U, transparent: true, depthTest: false, depthWrite: false,
+    vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`,
+    fragmentShader: `
+      precision mediump float; varying vec2 vUv; uniform vec2 uSize; uniform vec4 uR1, uR2;
+      float ring(vec2 p, vec4 r, float w){
+        if (r.w <= 0.001) return 0.0;
+        float d = length(p - r.xy);
+        return (exp(-pow((d - r.z) / w, 2.0)) + 0.25 * smoothstep(r.z, 0.0, d)) * r.w;
+      }
+      void main(){
+        vec2 p = vec2(vUv.x, 1.0 - vUv.y) * uSize;
+        float a = ring(p, uR1, 9.0) + ring(p, uR2, 7.0);
+        gl_FragColor = vec4(0.0, 0.48, 1.0, min(a, 0.6) * 0.42);   // #007aff，淡
+      }`,
+  }));
+  rings.frustumCulled = false; rings.renderOrder = 3; rings.visible = false; scene.add(rings);
+
+  /* 状态 */
+  let running = false, raf = 0, last = performance.now(), speed = 1, calmUntil = 0;
+  const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+  addEventListener('pointermove', e => { mouse.tx = (e.clientX / W - 0.5) * -26; mouse.ty = (e.clientY / H - 0.5) * -18; }, { passive: true });
+  document.addEventListener('input', () => { calmUntil = performance.now() + 1600; }, true);
+  let wave = null, pulse = null;   // wave: 存下的涟漪；pulse: 起点 / chip 脉冲
+  const ease = t => 1 - Math.pow(1 - t, 3);
+
+  fxSaved = (d, grp) => {
+    if (reduceMQ.matches) return;
+    const inp = document.getElementById('input').getBoundingClientRect();
+    const right = document.querySelector('.right').getBoundingClientRect();
+    const sx = inp.left + inp.width * 0.62, sy = inp.top + Math.min(inp.height, 200) * 0.45;
+    let ex, ey;
+    if (grp){ const g = grp.getBoundingClientRect(); ex = right.left - 2; ey = g.top + Math.min(g.height, 160) / 2; }
+    else { ex = right.left - 2; ey = right.top + 120; }
+    if (d.kind === 'edit' && grp){ const g = grp.getBoundingClientRect(); ex = right.left - 2; ey = g.top + Math.min(g.height, 160) / 2; }
+    wave = { t: 0, dur: 0.9, sx: d.kind === 'edit' ? ex - 260 : sx, sy: d.kind === 'edit' ? ey : sy, ex, ey };
+    pulse = { t: 0, dur: 0.6, x: wave.sx, y: wave.sy, max: 70 };
+    rings.visible = true;
+    if (!running) start();
+  };
+  fxAuthor = () => {
+    if (reduceMQ.matches) return;
+    const on = document.querySelector('#chipbar .chip.on');
+    if (!on) return;
+    const r = on.getBoundingClientRect();
+    pulse = { t: 0, dur: 0.5, x: r.left + r.width / 2, y: r.top + r.height / 2, max: Math.max(34, r.width * 0.75) };
+    rings.visible = true;
+  };
+
+  function resize(){
+    W = innerWidth; H = innerHeight;
+    renderer.setPixelRatio(DPR()); U.uPixel.value = renderer.getPixelRatio();
+    renderer.setSize(W, H, false); U.uSize.value.set(W, H);
+    if (!running) draw(0);
+  }
+  addEventListener('resize', resize);
+
+  function sim(dt){
+    const k = Math.exp(-dt * 2.6);
+    let wx = 0, wy = 0, wr = -1, ws = 0;
+    if (wave){ const e = ease(Math.min(1, wave.t / wave.dur)); wx = wave.sx + (wave.ex - wave.sx) * e; wy = wave.sy + (wave.ey - wave.sy) * e; wr = 24 + 150 * e; ws = 1 - wave.t / wave.dur; }
+    for (const p of P){
+      p.ix *= k; p.iy *= k;
+      if (wr > 0){
+        const dx = p.x - wx, dy = p.y - wy, d = Math.hypot(dx, dy) || 1;
+        const f = Math.exp(-Math.pow((d - wr) / 36, 2)) * ws;
+        if (f > 0.01){ p.ix += dx / d * f * 260 * dt; p.iy += dy / d * f * 260 * dt; }
+      }
+      p.x += (p.vx * (0.5 + p.z) + p.ix) * dt * speed + p.ix * dt * (1 - speed);
+      p.y += (p.vy * (0.5 + p.z) + p.iy) * dt * speed + p.iy * dt * (1 - speed);
+      if (p.y < -20){ p.y = H + 20; p.x = Math.random() * W; }
+      if (p.x < -20) p.x = W + 20; else if (p.x > W + 20) p.x = -20;
+      if (p.y > H + 20) p.y = -20;
+    }
+  }
+  function draw(dt){
+    // 写入点位置（含视差）
+    for (let i = 0; i < N; i++){
+      const p = P[i], par = 0.3 + p.z;
+      pPos[i*3] = p.x + mouse.x * par; pPos[i*3+1] = p.y + mouse.y * par;
+      pPos[i*3+2] = Math.min(1, Math.hypot(p.ix, p.iy) / 40);
+    }
+    pg.attributes.position.needsUpdate = true;
+    // 连线：近邻、深度相近
+    let n = 0;
+    for (let i = 0; i < N && n < MAXL; i++){
+      const ax = pPos[i*3], ay = pPos[i*3+1], az = P[i].z;
+      for (let j = i + 1; j < N; j++){
+        const dx = pPos[j*3] - ax; if (dx > LINK || dx < -LINK) continue;
+        const dy = pPos[j*3+1] - ay; if (dy > LINK || dy < -LINK) continue;
+        if (Math.abs(P[j].z - az) > 0.45) continue;
+        const d = Math.sqrt(dx*dx + dy*dy); if (d > LINK) continue;
+        const a = (1 - d / LINK) * 0.22;
+        lPos.set([ax, ay, 0, pPos[j*3], pPos[j*3+1], 0], n * 6);
+        lA[n*2] = a; lA[n*2+1] = a;
+        if (++n >= MAXL) break;
+      }
+    }
+    lg.setDrawRange(0, n * 2);
+    lg.attributes.position.needsUpdate = true; lg.attributes.aA.needsUpdate = true;
+    // 环
+    if (wave){
+      wave.t += dt; const t = Math.min(1, wave.t / wave.dur), e = ease(t);
+      U.uR1.value.set(wave.sx + (wave.ex - wave.sx) * e, wave.sy + (wave.ey - wave.sy) * e, 24 + 150 * e, Math.pow(1 - t, 1.4));
+      if (wave.t >= wave.dur){ wave = null; U.uR1.value.w = 0; }
+    }
+    if (pulse){
+      pulse.t += dt; const t = Math.min(1, pulse.t / pulse.dur);
+      U.uR2.value.set(pulse.x, pulse.y, 8 + pulse.max * ease(t), Math.pow(1 - t, 1.6));
+      if (pulse.t >= pulse.dur){ pulse = null; U.uR2.value.w = 0; }
+    }
+    rings.visible = !!(wave || pulse);
+    renderer.render(scene, camera);
+  }
+  function frame(now){
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    const calm = now < calmUntil;                        // 打字时放慢到一半、稍微淡一点
+    speed += ((calm ? 0.5 : 1) - speed) * Math.min(1, dt * 3);
+    U.uDim.value += ((calm ? 0.85 : 1) - U.uDim.value) * Math.min(1, dt * 2);
+    mouse.x += (mouse.tx - mouse.x) * Math.min(1, dt * 1.8); mouse.y += (mouse.ty - mouse.y) * Math.min(1, dt * 1.8);
+    sim(dt); draw(dt);
+  }
+  function loop(now){ if (!running) return; frame(now); raf = requestAnimationFrame(loop); }
+  function start(){
+    if (running || document.hidden || reduceMQ.matches){ if (reduceMQ.matches) draw(0); return; }
+    running = true; last = performance.now(); raf = requestAnimationFrame(loop);
+  }
+  function stop(){ running = false; cancelAnimationFrame(raf); }
+  document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
+  reduceMQ.addEventListener('change', () => { stop(); start(); });
+
+  resize();
+  if (reduceMQ.matches) draw(0); else start();
+  document.body.classList.add('fx-on');
+  root.dataset.gl = 'on';
+  window.__qn3d = { get running(){ return running; }, particles: N };
+})();
+</script>
+</body>
+</html>

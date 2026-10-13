@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#ffffff" />
+<title>交易笔记 · 交易跟踪</title>
+<link rel="stylesheet" href="/static/base.css?v=4" />
+<link rel="stylesheet" href="/static/synthesis.css?v=5" />
+<link rel="stylesheet" href="/static/trades.css?v=4" />
+<script src="/static/trades.js?v=1" defer></script>
+<script src="/static/helix.js?v=2" defer></script>
+<script src="/static/motion.js?v=3" defer></script>
+</head>
+<body>
+<header id="gnav" data-active="trades"></header>
+<script src="/static/nav.js?v=5"></script>
+<div class="app-trades">
+  <nav class="nav tnav" aria-label="交易列表">
+    <div class="brand"><span class="seal" aria-hidden="true">跟</span><div><h1>交易笔记</h1><span class="page-name">交易跟踪</span></div></div>
+    <div class="t-actions">
+      <button type="button" class="t-btn" id="btn-import">从笔记导入</button>
+      <button type="button" class="t-btn" id="btn-new">＋ 手动添加</button>
+    </div>
+    <form class="t-new" id="new-form" hidden>
+      <input id="new-title" maxlength="60" placeholder="标的，如 和林微纳" aria-label="标的" />
+      <textarea id="new-plan" rows="3" placeholder="计划原文" aria-label="计划原文"></textarea>
+      <div class="t-row"><button type="button" class="lnk" id="new-cancel">取消</button><button type="submit" class="t-btn solid">添加</button></div>
+    </form>
+    <p id="sync" role="status" aria-live="polite"></p>
+    <div class="t-lists">
+      <p class="t-label">进行中 <i id="open-count"></i></p>
+      <ul class="t-list" id="open-list"></ul>
+      <details class="t-closed" id="closed-box"><summary class="t-label">已了结 <i id="closed-count"></i></summary><ul class="t-list" id="closed-list"></ul></details>
+    </div>
+    <div class="nav-foot">
+      <a class="lnk" href="/synthesis">→ 当日综合</a>
+      <a class="lnk" href="/">← 回到当天笔记</a>
+    </div>
+  </nav>
+  <main class="doc" id="detail" aria-live="polite"></main>
+</div>
+</body>
+</html>

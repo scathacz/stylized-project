@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#ffffff" />
+<title>交易笔记 · 今日</title>
+<link rel="stylesheet" href="/static/base.css?v=4" />
+<link rel="stylesheet" href="/static/styles.css?v=18" />
+<script src="/static/helix.js?v=2" defer></script>
+<script src="/static/motion.js?v=3" defer></script>
+<script src="/static/app.js?v=18" defer></script>
+</head>
+<body>
+<header id="gnav" data-active="today"></header>
+<script src="/static/nav.js?v=5"></script>
+<main class="home">
+  <!-- 日期 + 主操作 -->
+  <section class="hero" aria-labelledby="day-title">
+    <div class="hero-helix" aria-hidden="true"><canvas data-helix="hero" id="hero-helix"></canvas></div>
+    <div class="hero-day">
+      <p class="kicker" id="day-kicker">TODAY</p>
+      <h1 id="day-title">—</h1>
+      <div class="day-switch">
+        <button type="button" class="btn ghost" id="day-prev" aria-label="前一个记录日">‹ 前一日</button>
+        <label class="day-input"><span class="sr-only">选择日期</span><input type="date" id="day-pick" /></label>
+        <button type="button" class="btn ghost" id="day-next" aria-label="后一个记录日">后一日 ›</button>
+        <button type="button" class="btn ghost" id="day-today" hidden>回到今天</button>
+      </div>
+    </div>
+        <div class="hero-act">
+      <div class="grok-status"><span class="chip" id="grok-chip"><span class="dot"></span><span id="grok-state">—</span></span><span class="muted small" id="grok-time"></span></div>
+      <button type="button" class="btn primary lg" id="btn-grok">让 Grok Bot 总结</button>
+      <p class="feedback" id="grok-msg" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <!-- 流程 -->
+  <ol class="flow" aria-label="每日流程">
+    <li id="flow-1"><i>1</i><span>记笔记<small id="flow-1-sub">—</small></span></li>
+    <li id="flow-2"><i>2</i><span>Grok Bot 总结<small id="flow-2-sub">—</small></span></li>
+    <li id="flow-3"><i>3</i><a href="/synthesis" id="flow-3-link">阅读综合 · 追问<small id="flow-3-sub">—</small></a></li>
+    <li id="flow-4"><i>4</i><a href="/trades">跟踪交易 · 写心得<small id="flow-4-sub">—</small></a></li>
+  </ol>
+
+  <div class="grid">
+    <!-- 主区：当天笔记 -->
+    <section class="card notes" aria-labelledby="notes-title">
+      <header class="card-head"><h3 id="notes-title">当天笔记 <em id="notes-count"></em></h3><a class="lnk" id="full-editor" href="/note">完整编辑器 ↗</a></header>
+      <div class="card-body">
+        <div class="composer">
+          <label class="sr-only" for="raw">粘贴或输入笔记</label>
+          <textarea id="raw" class="field" rows="7" spellcheck="false" placeholder="整段粘贴当天的笔记。单独一行写作者名（如 Fuelish、狼大、TradingPlan），下面的内容就归到这个人。&#10;&#10;Ctrl + Enter 保存"></textarea>
+          <div class="authors" id="authors" aria-label="插入作者行"></div>
+          <div class="composer-bar"><span class="muted small" id="draft-state">草稿自动保存在此浏览器</span><button type="button" class="btn primary" id="btn-save">保存到当天</button></div>
+          <p class="feedback" id="save-msg" role="status" aria-live="polite"></p>
+        </div>
+        <div id="note-groups" class="groups" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- 侧栏：判断 / 交易 / 历史 -->
+    <aside class="side">
+      <section class="card" aria-labelledby="sx-title">
+        <header class="card-head"><h3 id="sx-title">综合判断</h3><span class="muted small" id="sx-model"></span></header>
+        <div class="card-body" id="sx-body"><span class="skeleton w80"></span><span class="skeleton"></span><span class="skeleton w60"></span><span class="skeleton tall"></span></div>
+      </section>
+      <section class="card" aria-labelledby="tr-title">
+        <header class="card-head"><h3 id="tr-title">进行中的交易 <em id="tr-count"></em></h3><a class="lnk" href="/trades">全部 ↗</a></header>
+        <div class="card-body"><ul class="list" id="tr-list"><li><span class="skeleton w60"></span></li><li><span class="skeleton w40"></span></li></ul></div>
+      </section>
+      <section class="card" id="history" aria-labelledby="hi-title">
+        <header class="card-head"><h3 id="hi-title">历史</h3><span class="muted small" id="hi-count"></span></header>
+        <div class="card-body">
+          <input id="history-search" class="field" type="search" placeholder="搜索日期或笔记正文" aria-label="搜索笔记" />
+          <ul class="list history" id="day-list"><li><span class="skeleton"></span></li><li><span class="skeleton w80"></span></li><li><span class="skeleton w60"></span></li></ul>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <!-- 高级：旧流程，默认收起 -->
+  <details class="advanced" id="advanced">
+    <summary><span>高级</span><small>片段分类与证据 · 智能整理导入 · DeepSeek 旧版综合 · 归档</small></summary>
+    <div class="adv-body">
+      <section class="card">
+        <header class="card-head"><h3>智能整理导入</h3><span class="muted small">自动识别日期 / 分类 / 情绪（旧 /api/ingest 流程）</span></header>
+        <div class="card-body">
+          <textarea id="ingest-raw" class="field" rows="4" spellcheck="false" placeholder="研报、群聊、盘中观察……多日期混合的文本可走这里。"></textarea>
+          <div class="composer-bar">
+            <span class="adv-opts"><label><input id="smart-toggle" type="checkbox" checked /> 智能整理</label><label>无日期片段归入 <input id="date-override" type="date" class="field inline" /></label></span>
+            <button type="button" class="btn" id="btn-ingest">整理成笺</button>
+          </div>
+          <p class="feedback" id="ingest-msg" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+      <section class="card">
+        <header class="card-head"><h3>片段 <em id="visible-count"></em></h3>
+          <span class="seg" id="filters"><button type="button" data-filter="all">全部</button><button type="button" data-filter="macro">宏观</button><button type="button" data-filter="industry">行业</button><button type="button" data-filter="stock">个股</button></span></header>
+        <div class="card-body"><input id="snippet-search" class="field" type="search" placeholder="在当天片段中检索" /><div id="snippet-list" class="slips"></div></div>
+      </section>
+      <section class="card">
+        <header class="card-head"><h3>DeepSeek 旧版综合</h3><span class="muted small">已由 Grok Bot 综合取代，仅保留备查</span></header>
+        <div class="card-body"><div id="legacy-conclusion" class="legacy"></div><button type="button" class="btn" data-archive="conclude">用 DeepSeek 重新综合</button></div>
+      </section>
+      <section class="card">
+        <header class="card-head"><h3>原始记录与归档</h3></header>
+        <div class="card-body">
+          <details class="raw-box"><summary>查看当日完整原始记录</summary><pre id="day-raw"></pre></details>
+          <div class="composer-bar"><span class="muted small" id="archive-path"></span><span><button type="button" class="btn" data-archive="local">存为本地 Markdown</button> <button type="button" class="btn" data-archive="notion">归档到 Notion ↗</button></span></div>
+          <p id="archive-msg" class="feedback" role="status" aria-live="polite"></p>
+          <div id="health" class="muted small"></div>
+        </div>
+      </section>
+    </div>
+  </details>
+  <p id="day-msg" class="feedback center" role="status" aria-live="polite"></p>
+</main>
+
+<dialog id="expand-dlg" aria-labelledby="dlg-title"><form id="expand-form"><header class="card-head"><h3 id="dlg-title">让观点多一份依据</h3><button id="dlg-close" type="button" class="btn ghost" aria-label="关闭">×</button></header><div class="card-body"><blockquote id="dlg-quote"></blockquote><label for="dlg-provider" class="label">补充方式</label><select id="dlg-provider" class="field"></select><p id="provider-hint" class="muted small"></p><label for="dlg-query" class="label">想核实什么（可选）</label><input id="dlg-query" class="field" placeholder="例如：这条判断的关键假设是否成立？" /><div id="paste-field"><label for="dlg-paste" class="label">粘贴原始证据</label><textarea id="dlg-paste" class="field" rows="6"></textarea></div><p class="feedback" id="dlg-msg" role="status" aria-live="polite"></p><div class="composer-bar"><span class="muted small">证据将保留在这条片段下。</span><button id="dlg-go" type="submit" class="btn primary">补充证据</button></div></div></form></dialog>
+</body>
+</html>
